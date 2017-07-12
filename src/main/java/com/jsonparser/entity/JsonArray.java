@@ -40,6 +40,14 @@ public class JsonArray extends JsonFormat {
         return type;
     }
 
+    public int size() {
+        return array.size();
+    }
+
+    public Iterable getArray() {
+        return array;
+    }
+
     @Override
     String format(int layer) {
         StringBuilder str = new StringBuilder();

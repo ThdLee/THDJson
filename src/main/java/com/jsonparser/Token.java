@@ -4,26 +4,18 @@ package com.jsonparser;
  * Created by Theodore on 2017/6/6.
  */
 public enum Token {
-    ERROR("error"),
     INT("int"),
     FLOAT("float"),
     STRING("string"),
     TRUE("true", "true"),
     FALSE("false", "false"),
     NULL("null", "null"),
-    LPAREN("("),
-    RPAREN(")"),
     LBRACE("{", "{"),
     RBRACE("}", "}"),
     LBRACKET("[", "["),
     RBRACKET("]", "]"),
     COMMA(",", ","),
-    COLON(":", ":"),
-    SEMICOLON(";"),
-    DOT("."),
-    IDENTIFIER("identifier"),
-    UNDEFINED("undefined"),
-    END("end");
+    COLON(":", ":"),;
 
     /*********************/
     private Token(String name) {
