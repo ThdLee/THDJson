@@ -1,6 +1,6 @@
 package com.jsonparser.entity;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Created by Theodore on 2017/6/7.
@@ -9,10 +9,10 @@ public class JsonArray extends JsonFormat {
 
     private JsonValueType type;
 
-    private ArrayList<JsonValue> array;
+    private LinkedList<JsonValue> array;
 
     public JsonArray() {
-        array = new ArrayList<JsonValue>();
+        array = new LinkedList<JsonValue>();
         type = JsonValueType.ARRAY;
     }
 

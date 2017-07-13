@@ -3,17 +3,13 @@
  */
 
 public class User {
-    public String name;
-    public String sex;
-    public int age;
-    public boolean married;
-    public boolean vip;
-    public String introduction;
-
+    public int Id;
+    public String countrycode;
+    public String countryname;
     public User() {}
 
     @Override
     public String toString() {
-        return name + sex + age + married + vip + introduction;
+        return "" + Id + " " + countrycode + " " + countryname + "\n" ;
     }
 }

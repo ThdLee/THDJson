@@ -2,19 +2,46 @@ package com.jsonparser;
 
 import com.jsonparser.entity.*;
 import com.jsonparser.exception.DeserializerException;
+import com.jsonparser.exception.JsonException;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.LinkedList;
 
 /**
  * Created by Theodore on 2017/7/12.
  */
 public class Deserializer {
 
-    @SuppressWarnings("unchecked")
-    public <T> T deserializable(JsonFormat json, Class<T> clazz) throws IllegalAccessException, DeserializerException, InstantiationException {
+    private boolean isCaseInsensitive;
+    private Parser parser;
 
+    public Deserializer() {
+        parser = new Parser();
+        isCaseInsensitive = false;
+    }
+
+    public Deserializer(boolean caseInsensitive) {
+        parser = new Parser();
+        isCaseInsensitive = caseInsensitive;
+    }
+
+    public <T> T deserializable(String json, Class<T> clazz) throws JsonException, IllegalAccessException, DeserializerException, InstantiationException {
+        JsonFormat jsonFormat = parser.parseJson(json);
+        return deserializable(jsonFormat, clazz);
+    }
+
+    public <T> T deserializable(String json, Class<T> clazz, boolean caseInsensitive) throws JsonException, IllegalAccessException, DeserializerException, InstantiationException {
+        JsonFormat jsonFormat = parser.parseJson(json);
+        return deserializable(jsonFormat, clazz, caseInsensitive);
+    }
+
+    public <T> T deserializable(JsonFormat json, Class<T> clazz) throws IllegalAccessException, DeserializerException, InstantiationException {
+        return deserializable(json, clazz, isCaseInsensitive);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T deserializable(JsonFormat json, Class<T> clazz, boolean caseInsensitive) throws IllegalAccessException, DeserializerException, InstantiationException {
+        isCaseInsensitive = caseInsensitive;
         if (clazz.isArray() && json.getClass() == JsonArray.class) {
             return jsonArrayDeserializable((JsonArray) json, clazz);
         } else if (json.getClass() == JsonObject.class) {
@@ -31,6 +58,7 @@ public class Deserializer {
         int i = 0;
         for (Object jsonValue : jsonArray.getArray()) {
             Array.set(array, i, parseJsonValue((JsonValue) jsonValue, clazz.getComponentType()));
+            i++;
         }
         return (T) array;
     }
@@ -41,7 +69,7 @@ public class Deserializer {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             String name = field.getName();
-            JsonValue jsonValue = jsonObject.getValue(name);
+            JsonValue jsonValue = isCaseInsensitive ? jsonObject.getValueWithCaseInsensitive(name) : jsonObject.getValue(name);
             if (jsonValue == null) continue;
             Object val = parseJsonValue(jsonValue, field.getType());
             field.setAccessible(true);
@@ -119,4 +147,13 @@ public class Deserializer {
 
         throw new DeserializerException("unknown type: " + clazz);
     }
+
+    public boolean isCaseInsensitive() {
+        return isCaseInsensitive;
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        isCaseInsensitive = caseInsensitive;
+    }
+
 }

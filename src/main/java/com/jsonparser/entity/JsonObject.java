@@ -12,17 +12,25 @@ public class JsonObject extends JsonFormat{
 
     private Map<String, JsonValue> map;
 
+    private Map<String, String> stringMap;
+
     public JsonObject() {
         map = new HashMap<String, JsonValue>();
+        stringMap = new HashMap<String, String>();
         type = JsonValueType.OBJECT;
     }
 
     public void addKeyAndValue(String key, JsonValue value) {
         map.put(key, value);
+        stringMap.put(key.toLowerCase(), key);
     }
 
     public JsonValue getValue(String key) {
         return map.get(key);
+    }
+
+    public JsonValue getValueWithCaseInsensitive(String key) {
+        return map.get(stringMap.get(key.toLowerCase()));
     }
 
     @Override
