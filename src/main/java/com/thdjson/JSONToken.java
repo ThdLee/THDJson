@@ -3,7 +3,7 @@ package com.thdjson;
 /**
  * Created by Theodore on 2017/6/6.
  */
-public enum Token {
+public enum JSONToken {
     INT("int"),
     FLOAT("float"),
     STRING("string"),
@@ -18,11 +18,11 @@ public enum Token {
     COLON(":", ":"),;
 
     /*********************/
-    private Token(String name) {
+    private JSONToken(String name) {
         this.name = name;
     }
 
-    private Token(String name, String data) {
+    private JSONToken(String name, String data) {
         this.name = name;
         this.data = data;
     }
@@ -38,7 +38,7 @@ public enum Token {
         return data;
     }
 
-    public Token addData(String data) {
+    public JSONToken addData(String data) {
         this.data = data;
         return this;
     }

@@ -1,5 +1,5 @@
 import com.thdjson.*;
-import com.thdjson.entity.JsonFormat;
+import com.thdjson.entity.JSONFormat;
 import org.junit.Test;
 
 /**
@@ -41,13 +41,13 @@ public class DeserializeTest {
     public void testOnlyPublic() {
 
         try {
-            Parser parser = new Parser();
-            JsonFormat jsonFormat = parser.parseJson(json);
-            Deserializer deserializer = new Deserializer(true, true);
-            Information test = deserializer.deserialize(jsonFormat, Information.class);
+            JSONParser JSONParser = new JSONParser();
+            JSONFormat JSONFormat = JSONParser.parseJson(json);
+            JSONDeserializer JSONDeserializer = new JSONDeserializer(true, true);
+            Information test = JSONDeserializer.deserialize(JSONFormat, Information.class);
             System.out.println(test);
-            Serializer serializer = new Serializer(true, true);
-            System.out.println(serializer.serialize(test, Information.class));
+            JSONSerializer JSONSerializer = new JSONSerializer(true, true);
+            System.out.println(JSONSerializer.serialize(test, Information.class));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,13 +57,13 @@ public class DeserializeTest {
     public void testNotOnlyPublic() {
 
         try {
-            Parser parser = new Parser();
-            JsonFormat jsonFormat = parser.parseJson(json);
-            Deserializer deserializer = new Deserializer(true, false);
-            Information test = deserializer.deserialize(jsonFormat, Information.class);
+            JSONParser JSONParser = new JSONParser();
+            JSONFormat JSONFormat = JSONParser.parseJson(json);
+            JSONDeserializer JSONDeserializer = new JSONDeserializer(true, false);
+            Information test = JSONDeserializer.deserialize(JSONFormat, Information.class);
             System.out.println(test);
-            Serializer serializer = new Serializer(true, false);
-            System.out.println(serializer.serialize(test, Information.class));
+            JSONSerializer JSONSerializer = new JSONSerializer(true, false);
+            System.out.println(JSONSerializer.serialize(test, Information.class));
         } catch (Exception e) {
             e.printStackTrace();
         }

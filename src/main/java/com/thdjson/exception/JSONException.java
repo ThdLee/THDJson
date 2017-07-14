@@ -3,13 +3,13 @@ package com.thdjson.exception;
 /**
  * Created by Theodore on 2017/6/8.
  */
-public class JsonException extends RuntimeException {
+public class JSONException extends RuntimeException {
 
-    public JsonException() {
+    public JSONException() {
         super();
     }
 
-    public JsonException(String msg) {
+    public JSONException(String msg) {
         super(msg);
     }
 

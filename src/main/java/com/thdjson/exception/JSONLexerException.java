@@ -3,17 +3,17 @@ package com.thdjson.exception;
 /**
  * Created by Theodore on 2017/6/6.
  */
-public class JsonLexerException extends JsonException {
+public class JSONLexerException extends JSONException {
 
-    public JsonLexerException() {
+    public JSONLexerException() {
         super();
     }
 
-    public JsonLexerException(String msg) {
+    public JSONLexerException(String msg) {
         super(msg);
     }
 
-    public JsonLexerException(char ch) {
+    public JSONLexerException(char ch) {
         super("unable to recognize: " + ch);
     }
 

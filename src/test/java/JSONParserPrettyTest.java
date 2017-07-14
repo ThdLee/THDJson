@@ -1,10 +1,10 @@
-import com.thdjson.Parser;
+import com.thdjson.JSONParser;
 import org.junit.Test;
 
 /**
  * Created by Theodore on 2017/6/7.
  */
-public class ParserPrettyTest {
+public class JSONParserPrettyTest {
 
     @Test
     public void formattingTest() {
@@ -18,9 +18,9 @@ public class ParserPrettyTest {
                 "\"Id\":9,\n" +
                 "\"countryname\":\"Armenia\",\n" +
                 "\"countrycode\":\"AM\"}]}";
-        Parser parser = new Parser();
+        JSONParser JSONParser = new JSONParser();
         try {
-            System.out.println(parser.parseJson(json));
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,23 +5,23 @@ import java.util.LinkedList;
 /**
  * Created by Theodore on 2017/6/7.
  */
-public class JsonArray extends JsonFormat {
+public class JSONArray extends JSONFormat {
 
-    private JsonValueType type;
+    private JSONValueType type;
 
-    private LinkedList<JsonValue> array;
+    private LinkedList<JSONValue> array;
 
-    public JsonArray() {
-        array = new LinkedList<JsonValue>();
-        type = JsonValueType.ARRAY;
+    public JSONArray() {
+        array = new LinkedList<JSONValue>();
+        type = JSONValueType.ARRAY;
     }
 
-    public void addValue(JsonValue value) {
+    public void addValue(JSONValue value) {
         array.add(value);
     }
 
-    public JsonValue getValue(int index) {
-        JsonValue value = null;
+    public JSONValue getValue(int index) {
+        JSONValue value = null;
         try {
             value = array.get(index);
         } catch (IndexOutOfBoundsException e) {
@@ -36,7 +36,7 @@ public class JsonArray extends JsonFormat {
         return format(1);
     }
 
-    public JsonValueType getType() {
+    public JSONValueType getType() {
         return type;
     }
 
@@ -52,7 +52,7 @@ public class JsonArray extends JsonFormat {
     String format(int layer) {
         StringBuilder str = new StringBuilder();
         str.append("[\n");
-        for (JsonValue value : array) {
+        for (JSONValue value : array) {
             str.append(withSpace(layer));
             str.append(matchFormat(value, layer+1));
             str.append(",\n");

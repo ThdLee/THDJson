@@ -1,6 +1,6 @@
 package com.thdjson;
 
-import com.thdjson.exception.JsonLexerException;
+import com.thdjson.exception.JSONLexerException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by Theodore on 2017/6/6.
  */
-public class Lexer {
+public class JSONLexer {
     private static final char EOI = 0x1A;
 
     private static final char[] FilterChar = new char[] {
@@ -53,13 +53,13 @@ public class Lexer {
 
     private int cur = -1;   // current position for json string
 
-    private Token token;
+    private JSONToken JSONToken;
 
     private char ch = '\0';
 
     private StringBuilder readBuffer = null;    // record token string
 
-    public Lexer(String json) {
+    public JSONLexer(String json) {
         this.jsonString = json;
         len = json.length();
     }
@@ -67,28 +67,28 @@ public class Lexer {
     /**
      * Get Token from JsonFormat String successively
      * @return Token or null(no token can be found)
-     * @throws JsonLexerException
+     * @throws JSONLexerException
      */
-    public Token nextToken() throws JsonLexerException {
+    public JSONToken nextToken() throws JSONLexerException {
         nextChar();
 
         while (include(FilterChar, ch) || ch == '\n') {
             nextChar();
         }
         if (isEOF()) {
-            token = null;
+            JSONToken = null;
         } else if (ch == '{') {
-            token = Token.LBRACE;
+            JSONToken = JSONToken.LBRACE;
         } else if (ch == '}') {
-            token = Token.RBRACE;
+            JSONToken = JSONToken.RBRACE;
         } else if (ch == '[') {
-            token = Token.LBRACKET;
+            JSONToken = JSONToken.LBRACKET;
         } else if (ch == ']') {
-            token = Token.RBRACKET;
+            JSONToken = JSONToken.RBRACKET;
         } else if (ch == ':') {
-            token = Token.COLON;
+            JSONToken = JSONToken.COLON;
         } else if (ch == ',') {
-            token = Token.COMMA;
+            JSONToken = JSONToken.COMMA;
         } else if (ch == 'n') {
             scanNull();
         } else if (ch == 'f') {
@@ -100,13 +100,13 @@ public class Lexer {
         } else if (ch == '\"') {
             scanString();
         } else {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
 
-        return token;
+        return JSONToken;
     }
 
-    private char nextChar() throws JsonLexerException {
+    private char nextChar() throws JSONLexerException {
         if (cur >= len - 1) {
             return ch = '\0';
         }
@@ -114,7 +114,7 @@ public class Lexer {
         return ch;
     }
 
-    private void scanString() throws JsonLexerException {
+    private void scanString() throws JSONLexerException {
         nextChar();
         refreshBuffer();
         while (ch != '\"') {
@@ -124,7 +124,7 @@ public class Lexer {
                     readBuffer.append(ch);
                     continue;
                 }
-                throw new JsonLexerException("unclosed string : " + readBuffer.toString());
+                throw new JSONLexerException("unclosed string : " + readBuffer.toString());
             } else if (ch == '\\') {
                 nextChar();
 
@@ -144,87 +144,87 @@ public class Lexer {
                     int val = Integer.parseInt(new String(new char[] { u1, u2, u3, u4 }), 16);
                     readBuffer.append((char)val);
                 } else {
-                    throw new JsonLexerException("error string : " + readBuffer.toString());
+                    throw new JSONLexerException("error string : " + readBuffer.toString());
                 }
             } else {
                 readBuffer.append(ch);
             }
             nextChar();
         }
-        token = Token.STRING.addData(readBuffer.toString());
+        JSONToken = JSONToken.STRING.addData(readBuffer.toString());
     }
 
-    private void scanTrue() throws JsonLexerException {
+    private void scanTrue() throws JSONLexerException {
         nextChar();
         if (ch != 'r') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (ch != 'u') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (ch != 'e') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (EndSigns.contains(ch)) {
-            token = Token.TRUE;
+            JSONToken = JSONToken.TRUE;
             cur--;
         } else {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
     }
 
-    private void scanFalse() throws JsonLexerException {
+    private void scanFalse() throws JSONLexerException {
         nextChar();
         if (ch != 'a') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (ch != 'l') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (ch != 's') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (ch != 'e') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (EndSigns.contains(ch)) {
-            token = Token.FALSE;
+            JSONToken = JSONToken.FALSE;
             cur--;
         } else {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
     }
 
-    private void scanNull() throws JsonLexerException {
+    private void scanNull() throws JSONLexerException {
         nextChar();
         if (ch != 'u') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (ch != 'l') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (ch != 'l') {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
         nextChar();
         if (EndSigns.contains(ch)) {
-            token = Token.NULL;
+            JSONToken = JSONToken.NULL;
             cur--;
         } else {
-            throw new JsonLexerException(ch);
+            throw new JSONLexerException(ch);
         }
     }
 
-    private void scanNumber() throws JsonLexerException {
+    private void scanNumber() throws JSONLexerException {
         refreshBuffer();
         if (ch == '+' || ch == '-' ) {
             readBuffer.append(ch);
@@ -264,9 +264,9 @@ public class Lexer {
         }
         cur--;
         if (isDouble) {
-            token = Token.FLOAT.addData(readBuffer.toString());
+            JSONToken = JSONToken.FLOAT.addData(readBuffer.toString());
         } else {
-            token = Token.INT.addData(readBuffer.toString());
+            JSONToken = JSONToken.INT.addData(readBuffer.toString());
         }
     }
 

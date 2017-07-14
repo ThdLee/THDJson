@@ -3,7 +3,7 @@ package com.thdjson.entity;
 /**
  * Created by Theodore on 2017/6/7.
  */
-public abstract class JsonFormat implements JsonValue {
+public abstract class JSONFormat implements JSONValue {
 
     protected String space = "    ";
 
@@ -16,8 +16,8 @@ public abstract class JsonFormat implements JsonValue {
     }
 
     protected String matchFormat(Object object, int layer) {
-        if (object instanceof JsonFormat) {
-            return ((JsonFormat) object).format(layer);
+        if (object instanceof JSONFormat) {
+            return ((JSONFormat) object).format(layer);
         }
         return object.toString();
     }

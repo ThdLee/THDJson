@@ -1,12 +1,12 @@
-import com.thdjson.Lexer;
-import com.thdjson.Parser;
-import com.thdjson.Token;
+import com.thdjson.JSONLexer;
+import com.thdjson.JSONParser;
+import com.thdjson.JSONToken;
 import org.junit.Test;
 
 /**
  * Created by Theodore on 2017/6/7.
  */
-public class ParserTrueTest {
+public class JSONParserTrueTest {
 
     @Test
     public void testA() {
@@ -23,14 +23,14 @@ public class ParserTrueTest {
                 "        }\n" +
                 "    ]\n" +
                 "}}";
-        Lexer lexer = new Lexer(json);
-        Token token;
+        JSONLexer JSONLexer = new JSONLexer(json);
+        JSONToken JSONToken;
         try {
-        while ((token = lexer.nextToken()) != null) {
-            System.out.println(token);
+        while ((JSONToken = JSONLexer.nextToken()) != null) {
+            System.out.println(JSONToken);
         }
-        Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+        JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,14 +52,14 @@ public class ParserTrueTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        Lexer lexer = new Lexer(json);
-        Token token;
+        JSONLexer JSONLexer = new JSONLexer(json);
+        JSONToken JSONToken;
         try {
-        while ((token = lexer.nextToken()) != null) {
-            System.out.println(token);
+        while ((JSONToken = JSONLexer.nextToken()) != null) {
+            System.out.println(JSONToken);
         }
-        Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+        JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,14 +82,14 @@ public class ParserTrueTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        Lexer lexer = new Lexer(json);
-        Token token;
+        JSONLexer JSONLexer = new JSONLexer(json);
+        JSONToken JSONToken;
         try {
-        while ((token = lexer.nextToken()) != null) {
-            System.out.println(token);
+        while ((JSONToken = JSONLexer.nextToken()) != null) {
+            System.out.println(JSONToken);
         }
-        Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+        JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,14 +112,14 @@ public class ParserTrueTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        Lexer lexer = new Lexer(json);
-        Token token;
+        JSONLexer JSONLexer = new JSONLexer(json);
+        JSONToken JSONToken;
         try {
-        while ((token = lexer.nextToken()) != null) {
-            System.out.println(token);
+        while ((JSONToken = JSONLexer.nextToken()) != null) {
+            System.out.println(JSONToken);
         }
-        Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+        JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             e.printStackTrace();
         }

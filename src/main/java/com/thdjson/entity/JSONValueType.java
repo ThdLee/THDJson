@@ -3,7 +3,7 @@ package com.thdjson.entity;
 /**
  * Created by Theodore on 2017/6/9.
  */
-public enum JsonValueType {
+public enum JSONValueType {
     OBJECT("object"),
     ARRAY("array"),
     INT("int"),
@@ -17,7 +17,7 @@ public enum JsonValueType {
 
     private String type;
 
-    private JsonValueType(String type) {
+    private JSONValueType(String type) {
         this.type = type;
     }
 

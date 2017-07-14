@@ -1,10 +1,10 @@
-import com.thdjson.Parser;
+import com.thdjson.JSONParser;
 import org.junit.Test;
 
 /**
  * Created by Theodore on 2017/6/7.
  */
-public class ParserFalseTest {
+public class JSONParserFalseTest {
 
 
     @Test
@@ -23,8 +23,8 @@ public class ParserFalseTest {
                 "    ]\n" +
                 "}";
         try {
-            Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+            JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -47,8 +47,8 @@ public class ParserFalseTest {
                 "    ]\n" +
                 "}";
         try {
-            Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+            JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -72,8 +72,8 @@ public class ParserFalseTest {
                 "    ]\n" +
                 "}";
         try {
-            Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+            JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -97,8 +97,8 @@ public class ParserFalseTest {
                 "    ]\n" +
                 "}";
         try {
-            Parser parser = new Parser();
-            System.out.println(parser.parseJson(json));
+            JSONParser JSONParser = new JSONParser();
+            System.out.println(JSONParser.parseJson(json));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

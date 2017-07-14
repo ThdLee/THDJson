@@ -1,7 +1,7 @@
 package com.thdjson;
 
 import com.thdjson.entity.*;
-import com.thdjson.exception.SerializerException;
+import com.thdjson.exception.JSONSerializerException;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -10,7 +10,7 @@ import java.lang.reflect.Modifier;
 /**
  * Created by Theodore on 2017/7/13.
  */
-public class Serializer {
+public class JSONSerializer {
 
     /* Serialize fields with case insensitive when true */
     private boolean isCaseInsensitive;
@@ -18,12 +18,12 @@ public class Serializer {
     /* Only Serialize public fields in object when true */
     private boolean isOnlyPublic;
 
-    public Serializer() {
+    public JSONSerializer() {
         isCaseInsensitive = true;
         isOnlyPublic = true;
     }
 
-    public Serializer(boolean caseInsensitive, boolean onlyPublic) {
+    public JSONSerializer(boolean caseInsensitive, boolean onlyPublic) {
         isCaseInsensitive = caseInsensitive;
         isOnlyPublic = onlyPublic;
     }
@@ -44,34 +44,34 @@ public class Serializer {
      * @param clazz the class of obj
      * @return jsonFormat instance
      */
-    public <T> JsonFormat serialize(T obj, Class<T> clazz) {
-        JsonFormat jsonFormat = null;
+    public <T> JSONFormat serialize(T obj, Class<T> clazz) {
+        JSONFormat JSONFormat = null;
         try {
             if (clazz.isArray()) {
-                jsonFormat = serializeArray(obj, clazz);
+                JSONFormat = serializeArray(obj, clazz);
             } else {
-                jsonFormat = serializeObject(obj, clazz);
+                JSONFormat = serializeObject(obj, clazz);
             }
         } catch (IllegalAccessException e) {
-            throw new SerializerException(e.getMessage());
+            throw new JSONSerializerException(e.getMessage());
         }
-        return jsonFormat;
+        return JSONFormat;
     }
     
-    private <T> JsonArray serializeArray(T obj, Class<?> clazz) throws IllegalAccessException {
-        JsonArray jsonArray = new JsonArray();
+    private <T> JSONArray serializeArray(T obj, Class<?> clazz) throws IllegalAccessException {
+        JSONArray JSONArray = new JSONArray();
         int len = Array.getLength(obj);
         for (int i = 0; i < len; i++) {
             Object o = Array.get(obj, i);
-            jsonArray.addValue(serializeValue(o, clazz.getComponentType()));
+            JSONArray.addValue(serializeValue(o, clazz.getComponentType()));
         }
-        return jsonArray;
+        return JSONArray;
     }
 
-    private <T> JsonObject serializeObject(T obj, Class<?> clazz) throws IllegalAccessException {
+    private <T> JSONObject serializeObject(T obj, Class<?> clazz) throws IllegalAccessException {
         Field[] fields = obj.getClass().getDeclaredFields();
-        JsonObject jsonObject = new JsonObject();
-        JsonValue value = null;
+        JSONObject jsonObject = new JSONObject();
+        JSONValue value = null;
         for (Field field : fields) {
             if (isOnlyPublic && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
             field.setAccessible(true);
@@ -82,30 +82,30 @@ public class Serializer {
         return jsonObject;
     }
 
-    private <T> JsonValue serializeValue(T obj, Class<?> clazz) throws IllegalAccessException {
-        JsonValue jsonValue = null;
+    private <T> JSONValue serializeValue(T obj, Class<?> clazz) throws IllegalAccessException {
+        JSONValue JSONValue = null;
         if (obj != null) {
             if (clazz.isPrimitive() || clazz.isAssignableFrom(Number.class)) {
                 if (clazz == float.class || clazz == Float.class ||
                         clazz == double.class || clazz == Double.class) {
-                    jsonValue = new JsonElement(obj.toString(), JsonValueType.FLOAT);
+                    JSONValue = new JSONElement(obj.toString(), JSONValueType.FLOAT);
                 } else {
-                    jsonValue = new JsonElement(obj.toString(), JsonValueType.INT);
+                    JSONValue = new JSONElement(obj.toString(), JSONValueType.INT);
                 }
             } else if (clazz == boolean.class || clazz == Boolean.class) {
-                jsonValue = new JsonElement(obj.toString(), JsonValueType.BOOL);
+                JSONValue = new JSONElement(obj.toString(), JSONValueType.BOOL);
             } else if (clazz == char.class || clazz == Character.class || clazz == String.class) {
-                jsonValue = new JsonElement(obj.toString(), JsonValueType.STRING);
+                JSONValue = new JSONElement(obj.toString(), JSONValueType.STRING);
             } else if (clazz.isArray()) {
-                jsonValue = serializeArray(obj, clazz);
+                JSONValue = serializeArray(obj, clazz);
             } else {
-                jsonValue = serializeObject(obj, clazz);
+                JSONValue = serializeObject(obj, clazz);
             }
         } else {
-            jsonValue = new JsonElement(null, JsonValueType.NULL);
+            JSONValue = new JSONElement(null, JSONValueType.NULL);
         }
 
-        return jsonValue;
+        return JSONValue;
     }
 
     public boolean isCaseInsensitive() {

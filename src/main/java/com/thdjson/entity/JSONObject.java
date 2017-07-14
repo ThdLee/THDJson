@@ -6,30 +6,30 @@ import java.util.Map;
 /**
  * Created by Theodore on 2017/6/7.
  */
-public class JsonObject extends JsonFormat{
+public class JSONObject extends JSONFormat {
 
-    private JsonValueType type;
+    private JSONValueType type;
 
-    private Map<String, JsonValue> map;
+    private Map<String, JSONValue> map;
 
     private Map<String, String> stringMap;
 
-    public JsonObject() {
-        map = new HashMap<String, JsonValue>();
+    public JSONObject() {
+        map = new HashMap<String, JSONValue>();
         stringMap = new HashMap<String, String>();
-        type = JsonValueType.OBJECT;
+        type = JSONValueType.OBJECT;
     }
 
-    public void addKeyAndValue(String key, JsonValue value) {
+    public void addKeyAndValue(String key, JSONValue value) {
         map.put(key, value);
         stringMap.put(key.toLowerCase(), key);
     }
 
-    public JsonValue getValue(String key) {
+    public JSONValue getValue(String key) {
         return map.get(key);
     }
 
-    public JsonValue getValueWithCaseInsensitive(String key) {
+    public JSONValue getValueWithCaseInsensitive(String key) {
         return map.get(stringMap.get(key.toLowerCase()));
     }
 
@@ -38,7 +38,7 @@ public class JsonObject extends JsonFormat{
         return format(1);
     }
 
-    public JsonValueType getType() {
+    public JSONValueType getType() {
         return type;
     }
 
