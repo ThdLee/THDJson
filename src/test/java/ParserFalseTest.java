@@ -1,4 +1,4 @@
-import com.jsonparser.Parser;
+import com.thdjson.Parser;
 import org.junit.Test;
 
 /**

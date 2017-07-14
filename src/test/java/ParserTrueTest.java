@@ -1,6 +1,6 @@
-import com.jsonparser.Lexer;
-import com.jsonparser.Parser;
-import com.jsonparser.Token;
+import com.thdjson.Lexer;
+import com.thdjson.Parser;
+import com.thdjson.Token;
 import org.junit.Test;
 
 /**

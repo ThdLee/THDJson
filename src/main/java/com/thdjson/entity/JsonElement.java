@@ -1,7 +1,7 @@
-package com.jsonparser.entity;
+package com.thdjson.entity;
 
-import com.jsonparser.Token;
-import com.jsonparser.exception.JsonParserException;
+import com.thdjson.Token;
+import com.thdjson.exception.JsonParserException;
 
 /**
  * Created by Theodore on 2017/6/7.
@@ -39,7 +39,17 @@ public class JsonElement implements JsonValue {
         }
     }
 
+    public JsonElement(String value, JsonValueType type) {
+        this.type = type;
+        if (type == JsonValueType.STRING) {
+            this.value = '\"' + value + '\"';
+        } else {
+            this.value = value;
+        }
+    }
+
     public String getValue() {
+        if (type == JsonValueType.STRING) return value.substring(1,value.length()-1);
         return value;
     }
 

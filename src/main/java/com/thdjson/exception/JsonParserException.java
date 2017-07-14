@@ -1,4 +1,4 @@
-package com.jsonparser.exception;
+package com.thdjson.exception;
 
 /**
  * Created by Theodore on 2017/6/7.

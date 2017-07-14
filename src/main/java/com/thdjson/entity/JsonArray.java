@@ -1,4 +1,4 @@
-package com.jsonparser.entity;
+package com.thdjson.entity;
 
 import java.util.LinkedList;
 
@@ -26,9 +26,9 @@ public class JsonArray extends JsonFormat {
             value = array.get(index);
         } catch (IndexOutOfBoundsException e) {
             value = null;
-        } finally {
-            return value;
         }
+
+        return value;
     }
 
     @Override

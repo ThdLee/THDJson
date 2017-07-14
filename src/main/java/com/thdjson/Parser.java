@@ -1,8 +1,7 @@
-package com.jsonparser;
+package com.thdjson;
 
-import com.jsonparser.entity.*;
-import com.jsonparser.exception.JsonException;
-import com.jsonparser.exception.JsonParserException;
+import com.thdjson.entity.*;
+import com.thdjson.exception.JsonParserException;
 
 /**
  * Created by Theodore on 2017/6/7.
@@ -17,11 +16,10 @@ public class Parser {
 
     /**
      * Covert json string to JsonFormat class
-     * @param json
+     * @param json json string
      * @return formatted json class
-     * @throws JsonException
      */
-    public JsonFormat parseJson(String json) throws JsonException {
+    public JsonFormat parseJson(String json) {
         init(json);
         nextToken();
         if (token == Token.LBRACE) {
@@ -36,7 +34,7 @@ public class Parser {
 
     /**
      * Init class before parse json token
-     * @param json
+     * @param json json string
      */
     private void init(String json) {
         lexer = new Lexer(json);
@@ -44,11 +42,11 @@ public class Parser {
         jsonFormat = null;
     }
 
-    private Token nextToken() throws JsonException {
+    private Token nextToken() {
         return token = lexer.nextToken();
     }
 
-    private JsonObject parseObject() throws JsonException {
+    private JsonObject parseObject() {
         JsonObject object = new JsonObject();
 
         String key;
@@ -86,7 +84,7 @@ public class Parser {
         }
     }
 
-    private JsonArray parseArray() throws JsonException {
+    private JsonArray parseArray() {
         JsonArray array = new JsonArray();
 
         boolean isFirst = true;

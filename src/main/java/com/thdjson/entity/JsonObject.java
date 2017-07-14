@@ -1,4 +1,4 @@
-package com.jsonparser.entity;
+package com.thdjson.entity;
 
 import java.util.HashMap;
 import java.util.Map;

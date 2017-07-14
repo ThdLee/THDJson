@@ -1,6 +1,6 @@
-package com.jsonparser;
+package com.thdjson;
 
-import com.jsonparser.exception.JsonLexerException;
+import com.thdjson.exception.JsonLexerException;
 
 import java.util.HashMap;
 import java.util.HashSet;
