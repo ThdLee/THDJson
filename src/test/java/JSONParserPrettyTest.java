@@ -18,12 +18,8 @@ public class JSONParserPrettyTest {
                 "\"Id\":9,\n" +
                 "\"countryname\":\"Armenia\",\n" +
                 "\"countrycode\":\"AM\"}]}";
-        JSONParser JSONParser = new JSONParser();
-        try {
-            System.out.println(JSONParser.parseJson(json));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        JSONParser parser = new JSONParser();
+        System.out.println(parser.parseJson(json));
         System.out.println("***********************************");
     }
 }

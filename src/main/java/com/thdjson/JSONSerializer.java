@@ -6,6 +6,8 @@ import com.thdjson.exception.JSONSerializerException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Theodore on 2017/7/13.
@@ -39,63 +41,91 @@ public class JSONSerializer {
     }
 
     /**
-     * Convert object instance to json string.
-     * @param obj this object will be converted to json string
-     * @param clazz the class of obj
-     * @return string with json format
-     */
-    public <T> String serializeToString(T obj, Class<T> clazz) {
-        return serialize(obj, clazz).toString();
-    }
-
-    /**
-     * Convert object instance to JsonFormat.
+     * Convert object instance to JSONObject.
      * @param obj this object will be converted to JsonFormat
-     * @param clazz the class of obj
-     * @return jsonFormat instance
+     * @return JSONObject instance
      */
-    public <T> JSONFormat serialize(T obj, Class<T> clazz) {
-        JSONFormat JSONFormat = null;
+    public <T> JSONObject serializeObject(T obj) {
+        JSONObject jsonObject = new JSONObject();
+        JSONValue value = null;
+        Field[] fields = null;
         try {
-            if (clazz.isArray()) {
-                JSONFormat = serializeArray(obj, clazz);
-            } else {
-                JSONFormat = serializeObject(obj, clazz);
+            for (Class<?> cla = obj.getClass(); cla != Object.class; cla = cla.getSuperclass()) {
+                fields = cla.getDeclaredFields();
+                for (Field field : fields) {
+                    if (isOnlyPublic && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
+                    field.setAccessible(true);
+                    String name = isCaseInsensitive ? field.getName().toLowerCase() : field.getName();
+                    value = serializeValue(field.get(obj), field.getType());
+                    jsonObject.addKeyAndValue(name, value);
+                }
             }
         } catch (IllegalAccessException e) {
             throw new JSONSerializerException(e.getMessage());
         }
-        return JSONFormat;
-    }
-    
-    private <T> JSONArray serializeArray(T obj, Class<?> clazz) throws IllegalAccessException {
-        JSONArray JSONArray = new JSONArray();
-        int len = Array.getLength(obj);
-        for (int i = 0; i < len; i++) {
-            Object o = Array.get(obj, i);
-            JSONArray.addValue(serializeValue(o, clazz.getComponentType()));
-        }
-        return JSONArray;
+        return jsonObject;
     }
 
-    private <T> JSONObject serializeObject(T obj, Class<?> clazz) throws IllegalAccessException {
-        Field[] fields = obj.getClass().getDeclaredFields();
+    /**
+     * Convert object instance to JSONObject.
+     * @param map this map will be converted to JsonFormat
+     * @return JSONObject instance
+     */
+    public <T> JSONObject serializeMap(Map map) {
         JSONObject jsonObject = new JSONObject();
-        JSONValue value = null;
-        for (Field field : fields) {
-            if (isOnlyPublic && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
-            field.setAccessible(true);
-            String name = isCaseInsensitive ? field.getName().toLowerCase() : field.getName();
-            value = serializeValue(field.get(obj), field.getType());
-            jsonObject.addKeyAndValue(name, value);
+        try {
+            for (Object key : map.keySet()) {
+                Object val = map.get(key);
+                JSONValue jsonValue = serializeValue(val, val.getClass());
+                jsonObject.addKeyAndValue(key.toString(), jsonValue);
+            }
+        } catch (IllegalAccessException e) {
+            throw new JSONSerializerException(e.getMessage());
         }
         return jsonObject;
+    }
+
+    /**
+     * Convert object instance to JSONArray.
+     * @param array this array will be converted to JsonFormat
+     * @return JSONArray instance
+     */
+    public <T> JSONArray serializeArray(T array) {
+        if (!array.getClass().isArray()) throw new JSONSerializerException("wrong type: " + array.getClass());
+        JSONArray jsonArray = new JSONArray();
+        int len = Array.getLength(array);
+        try {
+            for (int i = 0; i < len; i++) {
+                Object o = Array.get(array, i);
+                jsonArray.addValue(serializeValue(o, array.getClass().getComponentType()));
+            }
+        } catch (IllegalAccessException e) {
+            throw new JSONSerializerException(e.getMessage());
+        }
+        return jsonArray;
+    }
+
+    /**
+     * Convert object instance to JSONArray.
+     * @param list this list will be converted to JSONArray
+     * @return JSONArray instance
+     */
+    public <T> JSONArray serializeList(List list) {
+        JSONArray jsonArray = new JSONArray();
+        try {
+            for (Object obj : list) {
+                jsonArray.addValue(serializeValue(obj, obj.getClass()));
+            }
+        } catch (IllegalAccessException e) {
+            throw new JSONSerializerException(e.getMessage());
+        }
+        return jsonArray;
     }
 
     private <T> JSONValue serializeValue(T obj, Class<?> clazz) throws IllegalAccessException {
         JSONValue JSONValue = null;
         if (obj != null) {
-            if (clazz.isPrimitive() || clazz.isAssignableFrom(Number.class)) {
+            if (clazz.isPrimitive() || Number.class.isAssignableFrom(clazz)) {
                 if (clazz == float.class || clazz == Float.class ||
                         clazz == double.class || clazz == Double.class) {
                     JSONValue = new JSONElement(obj.toString(), JSONValueType.FLOAT);
@@ -107,9 +137,9 @@ public class JSONSerializer {
             } else if (clazz == char.class || clazz == Character.class || clazz == String.class) {
                 JSONValue = new JSONElement(obj.toString(), JSONValueType.STRING);
             } else if (clazz.isArray()) {
-                JSONValue = serializeArray(obj, clazz);
+                JSONValue = serializeArray(obj);
             } else {
-                JSONValue = serializeObject(obj, clazz);
+                JSONValue = serializeObject(obj);
             }
         } else {
             JSONValue = new JSONElement(null, JSONValueType.NULL);

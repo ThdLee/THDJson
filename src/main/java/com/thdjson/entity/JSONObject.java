@@ -2,6 +2,7 @@ package com.thdjson.entity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Theodore on 2017/6/7.
@@ -32,6 +33,10 @@ public class JSONObject extends JSONFormat {
 
     public JSONValue getValueWithCaseInsensitive(String key) {
         return map.get(stringMap.get(key.toLowerCase()));
+    }
+
+    public Set<String> keys() {
+        return map.keySet();
     }
 
     @Override

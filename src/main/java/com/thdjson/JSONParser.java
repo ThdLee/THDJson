@@ -8,28 +8,47 @@ import com.thdjson.exception.JSONParserException;
  */
 public class JSONParser {
 
-    private JSONLexer JSONLexer;
+    private JSONLexer lexer;
 
-    private JSONFormat JSONFormat;
+    private JSONFormat jsonFormat;
 
-    private JSONToken JSONToken;    // current token to handle
+    private JSONToken token;    // current token to handle
 
     /**
-     * Covert json string to JsonFormat class.
+     * Covert json string to JSONFormat.
      * @param json string with json format
-     * @return formatted json class
      */
     public JSONFormat parseJson(String json) {
         init(json);
         nextToken();
-        if (JSONToken == JSONToken.LBRACE) {
-            JSONFormat = parseObject();
-        } else if (JSONToken == JSONToken.LBRACKET) {
-            JSONFormat = parseArray();
+        if (token == JSONToken.LBRACE) {
+            jsonFormat = parseObject();
+        } else if (token == JSONToken.LBRACKET) {
+            jsonFormat = parseArray();
         } else {
-            JSONFormat = null;
+            jsonFormat = null;
         }
-        return JSONFormat;
+        return jsonFormat;
+    }
+
+    /**
+     * Covert json string to JSONArray.
+     * @param json string with json format
+     */
+    public JSONArray parseArray(String json) {
+        JSONFormat jsonFormat = parseJson(json);
+        assert jsonFormat instanceof JSONArray;
+        return (JSONArray) jsonFormat;
+    }
+
+    /**
+     * Covert json string to JSONObject.
+     * @param json string with json format
+     */
+    public JSONObject parseObject(String json) {
+        JSONFormat jsonFormat = parseJson(json);
+        assert jsonFormat instanceof JSONObject;
+        return (JSONObject) jsonFormat;
     }
 
     /**
@@ -37,13 +56,13 @@ public class JSONParser {
      * @param json json string
      */
     private void init(String json) {
-        JSONLexer = new JSONLexer(json);
-        JSONToken = null;
-        JSONFormat = null;
+        lexer = new JSONLexer(json);
+        token = null;
+        jsonFormat = null;
     }
 
     private JSONToken nextToken() {
-        return JSONToken = JSONLexer.nextToken();
+        return token = lexer.nextToken();
     }
 
     private JSONObject parseObject() {
@@ -55,29 +74,29 @@ public class JSONParser {
         boolean isFirst = true;
         for (;;) {
             nextToken();
-            if (JSONToken == JSONToken.RBRACE) {
+            if (token == JSONToken.RBRACE) {
                 return object;
-            } else if (JSONToken == JSONToken.COMMA && !isFirst) {
+            } else if (token == JSONToken.COMMA && !isFirst) {
                 nextToken();
-            } else if (JSONToken != JSONToken.COMMA && !isFirst) {
+            } else if (token != JSONToken.COMMA && !isFirst) {
                 throw new JSONParserException("expect \",\"");
             }
-            if (JSONToken == JSONToken.STRING) {
-                key = JSONToken.getData();
+            if (token == JSONToken.STRING) {
+                key = token.getData();
             } else {
                 throw new JSONParserException("expect string type");
             }
             nextToken();
-            if (JSONToken != JSONToken.COLON) {
+            if (token != JSONToken.COLON) {
                 throw new JSONParserException("expect \":\"");
             }
             nextToken();
-            if (JSONToken == JSONToken.LBRACE) {
+            if (token == JSONToken.LBRACE) {
                 value = parseObject();
-            } else if (JSONToken == JSONToken.LBRACKET) {
+            } else if (token == JSONToken.LBRACKET) {
                 value = parseArray();
             } else {
-                value = new JSONElement(JSONToken);
+                value = new JSONElement(token);
             }
             object.addKeyAndValue(key, value);
             if (isFirst) isFirst = false;
@@ -90,19 +109,19 @@ public class JSONParser {
         boolean isFirst = true;
         for (;;) {
             nextToken();
-            if (JSONToken == JSONToken.RBRACKET) {
+            if (token == JSONToken.RBRACKET) {
                 return array;
-            } else if (JSONToken == JSONToken.COMMA && !isFirst) {
+            } else if (token == JSONToken.COMMA && !isFirst) {
                 nextToken();
-            } else if (JSONToken != JSONToken.COMMA && !isFirst) {
+            } else if (token != JSONToken.COMMA && !isFirst) {
                 throw new JSONParserException("expect \",\"");
             }
-            if (JSONToken == JSONToken.LBRACKET) {
+            if (token == JSONToken.LBRACKET) {
                 array.addValue(parseArray());
-            } else if (JSONToken == JSONToken.LBRACE) {
+            } else if (token == JSONToken.LBRACE) {
                 array.addValue(parseObject());
             } else {
-                array.addValue(new JSONElement(JSONToken));
+                array.addValue(new JSONElement(token));
             }
             if (isFirst) isFirst = false;
         }

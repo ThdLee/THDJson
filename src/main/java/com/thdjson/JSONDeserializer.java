@@ -3,9 +3,8 @@ package com.thdjson;
 import com.thdjson.entity.*;
 import com.thdjson.exception.JSONDeserializerException;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Created by Theodore on 2017/7/12.
@@ -18,13 +17,10 @@ public class JSONDeserializer {
     /* Only deserialize public fields of object */
     private boolean isOnlyPublic;
 
-    private JSONParser JSONParser;
-
     /**
      * Initializes an Json Deserializer.
      */
     public JSONDeserializer() {
-        JSONParser = new JSONParser();
         isCaseInsensitive = true;
         isOnlyPublic = true;
     }
@@ -37,78 +33,125 @@ public class JSONDeserializer {
      *                   {@code false} deserialize all kinds of fields of object
      */
     public JSONDeserializer(boolean caseInsensitive, boolean onlyPublic) {
-        JSONParser = new JSONParser();
         isCaseInsensitive = caseInsensitive;
         isOnlyPublic = onlyPublic;
     }
 
     /**
-     * Deserialize json string to class instance.
-     * @param json string with json format
-     * @param clazz class type to return
-     * @throws JSONDeserializerException if {@code json} is not instanceof JSONArray or JSONObject
-     */
-    public <T> T deserialize(String json, Class<T> clazz) {
-        JSONFormat JSONFormat = JSONParser.parseJson(json);
-        return deserialize(JSONFormat, clazz);
-    }
-
-    /**
      * Deserialize json format with case insensitive option to class instance.
-     * @param json instance of JSONArray or JSONObject
+     * @param jsonObject instance of JSONObject
      * @param clazz class type to return
-     * @throws JSONDeserializerException if {@code json} is not instanceof JSONArray or JSONObject
+     * @return Generic T instance
+     * @throws JSONDeserializerException if class wrong
      */
-    @SuppressWarnings("unchecked")
-    public <T> T deserialize(JSONFormat json, Class<T> clazz) {
+    public <T> T deserializeToObject(JSONObject jsonObject, Class<T> clazz) {
+        if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()) || clazz.isArray())
+            throw new JSONDeserializerException("wrong type: " + clazz);
         T result = null;
         try {
-            if (clazz.isArray() && json.getClass() == JSONArray.class) {
-                result = DeserializeJsonArray((JSONArray) json, clazz);
-            } else if (json.getClass() == JSONObject.class) {
-                result = DeserializeJsonObject((JSONObject) json, clazz);
-            } else {
-                throw new JSONDeserializerException("Wrong Type");
-            }
+            result = deserializeJsonObject((JSONObject) jsonObject, clazz);
         } catch (IllegalAccessException | InstantiationException e) {
             throw new JSONDeserializerException(e.getMessage());
         }
         return result;
     }
 
+    /**
+     * Deserialize json format to class instance.
+     * @param jsonObject instance of JSONObject
+     * @param clazz class type to return
+     * @return instance of HashMap
+     * @throws JSONDeserializerException if class wrong
+     */
     @SuppressWarnings("unchecked")
-    private <T> T DeserializeJsonArray(JSONArray JSONArray, Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        if (!clazz.isArray()) throw new JSONDeserializerException("not array");
-        Object array = Array.newInstance(clazz.getComponentType(), JSONArray.size());
+    public <T> Map<String, T> deserializeToMap(JSONObject jsonObject, Class<T> clazz) {
+        Map<String, T> map = new HashMap<>();
+        try {
+            for (String key : jsonObject.keys()) {
+                key = isCaseInsensitive ? key.toLowerCase() : key;
+                map.put(key, (T) deserializeJsonValue(jsonObject.getValue(key), clazz));
+            }
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new JSONDeserializerException(e.getMessage());
+        }
+        return map;
+    }
+
+    /**
+     * Deserialize json format to class instance.
+     * @param jsonArray instance of JSONArray
+     * @param clazz class type to return
+     * @throws JSONDeserializerException if class wrong
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T deserializeToArray(JSONArray jsonArray, Class<T> clazz) {
+        if (!clazz.isArray())
+            throw new JSONDeserializerException("wrong type: " + clazz);
+        T result = null;
+        try {
+            result = deserializeJsonArray((JSONArray) jsonArray, clazz);
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new JSONDeserializerException(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * Deserialize json format to class instance.
+     * @param jsonArray instance of JSONArray
+     * @param clazz class type to return
+     * @return instance of LinkedList
+     * @throws JSONDeserializerException if class wrong
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> deserializeToList(JSONArray jsonArray, Class<T> clazz) {
+        List<T> list = new LinkedList<>();
+        try {
+            for (Object jsonValue : jsonArray.getArray()) {
+                list.add((T)deserializeJsonValue((JSONValue) jsonValue, clazz));
+            }
+        }  catch (IllegalAccessException | InstantiationException e) {
+            throw new JSONDeserializerException(e.getMessage());
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T deserializeJsonArray(JSONArray jsonArray, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+        Object array = Array.newInstance(clazz.getComponentType(), jsonArray.size());
         int i = 0;
-        for (Object jsonValue : JSONArray.getArray()) {
-            Array.set(array, i, DeserializeJsonValue((JSONValue) jsonValue, clazz.getComponentType()));
+        for (Object jsonValue : jsonArray.getArray()) {
+            Array.set(array, i, deserializeJsonValue((JSONValue) jsonValue, clazz.getComponentType()));
             i++;
         }
         return (T) array;
     }
 
-    private <T> T DeserializeJsonObject(JSONObject jsonObject, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+    @SuppressWarnings("unchecked")
+    private <T> T deserializeJsonObject(JSONObject jsonObject, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T obj = clazz.newInstance();
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            if (isOnlyPublic && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
-            String name = field.getName();
-            JSONValue JSONValue = isCaseInsensitive ? jsonObject.getValueWithCaseInsensitive(name) : jsonObject.getValue(name);
-            if (JSONValue == null) continue;
-            Object val = DeserializeJsonValue(JSONValue, field.getType());
-            field.setAccessible(true);
-            field.set(obj, val);
+        Field[] fields = null;
+        for (Class<?> cla = clazz; cla != Object.class; cla = cla.getSuperclass()) {
+            fields = cla.getDeclaredFields();
+            for (Field field : fields) {
+                if (isOnlyPublic && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
+                String name = field.getName();
+                JSONValue JSONValue = isCaseInsensitive ? jsonObject.getValueWithCaseInsensitive(name) : jsonObject.getValue(name);
+                if (JSONValue == null) continue;
+                Object val = deserializeJsonValue(JSONValue, field.getType());
+                field.setAccessible(true);
+                field.set(obj, val);
+            }
         }
         return obj;
     }
 
-    private Object DeserializeJsonValue(JSONValue JSONValue, Class<?> clazz) throws IllegalAccessException, InstantiationException {
-        JSONValueType type = JSONValue.getType();
+    private Object deserializeJsonValue(JSONValue jsonValue, Class<?> clazz) throws IllegalAccessException, InstantiationException {
+        JSONValueType type = jsonValue.getType();
 
-        if (JSONValue.getClass() == JSONElement.class) {
+        if (jsonValue instanceof JSONElement) {
 
-            String value = ((JSONElement) JSONValue).getValue();
+            String value = ((JSONElement) jsonValue).getValue();
 
             if (type == JSONValueType.INT) {
                 long val = Long.parseLong(value);
@@ -163,10 +206,10 @@ public class JSONDeserializer {
                 return null;
             }
             throw new JSONDeserializerException("unknown type: " + clazz);
-        } else if (JSONValue.getClass() == JSONArray.class) {
-            return DeserializeJsonArray((JSONArray) JSONValue, clazz);
-        } else if (JSONValue.getClass() == JSONObject.class) {
-            return DeserializeJsonObject((JSONObject) JSONValue, clazz);
+        } else if (jsonValue instanceof JSONArray) {
+            return deserializeJsonArray((JSONArray) jsonValue, clazz);
+        } else if (jsonValue instanceof JSONObject) {
+            return deserializeJsonObject((JSONObject) jsonValue, clazz);
         }
 
         throw new JSONDeserializerException("unknown type: " + clazz);

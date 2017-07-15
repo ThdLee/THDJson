@@ -2,10 +2,10 @@ import com.thdjson.JSONParser;
 import org.junit.Test;
 
 /**
+ * All tests in this class will fail
  * Created by Theodore on 2017/6/7.
  */
 public class JSONParserFalseTest {
-
 
     @Test
     public void testA() {
@@ -22,12 +22,8 @@ public class JSONParserFalseTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        try {
-            JSONParser JSONParser = new JSONParser();
-            System.out.println(JSONParser.parseJson(json));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        JSONParser parser = new JSONParser();
+        System.out.println(parser.parseJson(json));
         System.out.println("***********************************");
     }
 
@@ -46,12 +42,9 @@ public class JSONParserFalseTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        try {
-            JSONParser JSONParser = new JSONParser();
-            System.out.println(JSONParser.parseJson(json));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+
+        JSONParser parser = new JSONParser();
+        System.out.println(parser.parseJson(json));
         System.out.println("***********************************");
     }
 
@@ -71,12 +64,8 @@ public class JSONParserFalseTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        try {
-            JSONParser JSONParser = new JSONParser();
-            System.out.println(JSONParser.parseJson(json));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        JSONParser parser = new JSONParser();
+        System.out.println(parser.parseJson(json));
         System.out.println("***********************************");
     }
 
@@ -96,12 +85,8 @@ public class JSONParserFalseTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        try {
-            JSONParser JSONParser = new JSONParser();
-            System.out.println(JSONParser.parseJson(json));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        JSONParser parser = new JSONParser();
+        System.out.println(parser.parseJson(json));
         System.out.println("***********************************");
     }
 }
