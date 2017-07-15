@@ -15,6 +15,9 @@ public abstract class JSONFormat implements JSONValue {
         return strbuf.toString();
     }
 
+    /**
+     *  Formatting json string
+     */
     protected String matchFormat(Object object, int layer) {
         if (object instanceof JSONFormat) {
             return ((JSONFormat) object).format(layer);

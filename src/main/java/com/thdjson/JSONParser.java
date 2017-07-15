@@ -15,8 +15,8 @@ public class JSONParser {
     private JSONToken JSONToken;    // current token to handle
 
     /**
-     * Covert json string to JsonFormat class
-     * @param json json string
+     * Covert json string to JsonFormat class.
+     * @param json string with json format
      * @return formatted json class
      */
     public JSONFormat parseJson(String json) {
@@ -33,7 +33,7 @@ public class JSONParser {
     }
 
     /**
-     * Init class before parse json token
+     * Init class before parse json token.
      * @param json json string
      */
     private void init(String json) {

@@ -12,24 +12,34 @@ import java.lang.reflect.Modifier;
  */
 public class JSONSerializer {
 
-    /* Serialize fields with case insensitive when true */
+    /* Serialize fields with case insensitive */
     private boolean isCaseInsensitive;
 
-    /* Only Serialize public fields in object when true */
+    /* Only Serialize public fields of object */
     private boolean isOnlyPublic;
 
+    /**
+     * Initializes an Json Serializer.
+     */
     public JSONSerializer() {
         isCaseInsensitive = true;
         isOnlyPublic = true;
     }
 
+    /**
+     * Initializes an Json Serializer with the specified flags.
+     * @param caseInsensitive {@code true} serialize fields with case insensitive
+     *                        {@code false} otherwise
+     * @param onlyPublic {@code true} only serialize public fields of object
+     *                   {@code false} serialize all kinds of fields of object
+     */
     public JSONSerializer(boolean caseInsensitive, boolean onlyPublic) {
         isCaseInsensitive = caseInsensitive;
         isOnlyPublic = onlyPublic;
     }
 
     /**
-     * Convert object instance to json string
+     * Convert object instance to json string.
      * @param obj this object will be converted to json string
      * @param clazz the class of obj
      * @return string with json format
@@ -39,7 +49,7 @@ public class JSONSerializer {
     }
 
     /**
-     * Convert object instance to JsonFormat
+     * Convert object instance to JsonFormat.
      * @param obj this object will be converted to JsonFormat
      * @param clazz the class of obj
      * @return jsonFormat instance

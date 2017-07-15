@@ -12,20 +12,30 @@ import java.lang.reflect.Modifier;
  */
 public class JSONDeserializer {
 
-    /* Deserialize fields with case insensitive when true */
+    /* Deserialize fields with case insensitive */
     private boolean isCaseInsensitive;
 
-    /* Only deserialize public fields in object when true */
+    /* Only deserialize public fields of object */
     private boolean isOnlyPublic;
 
     private JSONParser JSONParser;
 
+    /**
+     * Initializes an Json Deserializer.
+     */
     public JSONDeserializer() {
         JSONParser = new JSONParser();
         isCaseInsensitive = true;
         isOnlyPublic = true;
     }
 
+    /**
+     * Initializes an Json Deserializer with the specified flags.
+     * @param caseInsensitive {@code true} deserialize fields with case insensitive
+     *                        {@code false} otherwise
+     * @param onlyPublic {@code true} only deserialize public fields of object
+     *                   {@code false} deserialize all kinds of fields of object
+     */
     public JSONDeserializer(boolean caseInsensitive, boolean onlyPublic) {
         JSONParser = new JSONParser();
         isCaseInsensitive = caseInsensitive;
@@ -33,8 +43,10 @@ public class JSONDeserializer {
     }
 
     /**
-     * Deserialize json string to class instance
+     * Deserialize json string to class instance.
+     * @param json string with json format
      * @param clazz class type to return
+     * @throws JSONDeserializerException if {@code json} is not instanceof JSONArray or JSONObject
      */
     public <T> T deserialize(String json, Class<T> clazz) {
         JSONFormat JSONFormat = JSONParser.parseJson(json);
@@ -42,8 +54,10 @@ public class JSONDeserializer {
     }
 
     /**
-     * Deserialize json format with case insensitive option to class instance
+     * Deserialize json format with case insensitive option to class instance.
+     * @param json instance of JSONArray or JSONObject
      * @param clazz class type to return
+     * @throws JSONDeserializerException if {@code json} is not instanceof JSONArray or JSONObject
      */
     @SuppressWarnings("unchecked")
     public <T> T deserialize(JSONFormat json, Class<T> clazz) {

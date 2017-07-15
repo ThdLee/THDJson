@@ -12,6 +12,7 @@ public class JSONObject extends JSONFormat {
 
     private Map<String, JSONValue> map;
 
+    /* use for case insensitive */
     private Map<String, String> stringMap;
 
     public JSONObject() {

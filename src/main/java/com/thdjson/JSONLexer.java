@@ -65,7 +65,7 @@ public class JSONLexer {
     }
 
     /**
-     * Get Token from JsonFormat String successively
+     * Get Token from JsonFormat String successively/
      * @return Token or null(no token can be found)
      * @throws JSONLexerException
      */
