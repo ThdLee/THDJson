@@ -12,8 +12,8 @@ public class JSONElement implements JSONValue {
 
     private String value;
 
-    public JSONElement(JSONToken JSONToken) throws JSONParserException {
-        switch (JSONToken) {
+    public JSONElement(JSONToken jsonToken) throws JSONParserException {
+        switch (jsonToken) {
             case STRING:
                 type = JSONValueType.STRING;
                 break;
@@ -33,28 +33,21 @@ public class JSONElement implements JSONValue {
             default:
                 throw new JSONParserException();
         }
-        value = JSONToken.getData().toString();
-        if (type == JSONValueType.STRING) {
-            value = "\"" + value + "\"";
-        }
+        value = jsonToken.getData();
     }
 
     public JSONElement(String value, JSONValueType type) {
         this.type = type;
-        if (type == JSONValueType.STRING) {
-            this.value = '\"' + value + '\"';
-        } else {
-            this.value = value;
-        }
+        this.value = value;
     }
 
     public String getValue() {
-        if (type == JSONValueType.STRING) return value.substring(1,value.length()-1);
         return value;
     }
 
     @Override
     public String toString() {
+        if (type == JSONValueType.STRING) return "\"" + value + "\"";
         return value;
     }
 

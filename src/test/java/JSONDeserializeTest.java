@@ -10,12 +10,13 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * Created by Theodore on 2017/7/12.
  */
-public class DeserializeTest {
+public class JSONDeserializeTest {
 
     static final String json ="{\n" +
             "    \"RECORDS\": [\n" +
@@ -103,8 +104,8 @@ public class DeserializeTest {
         JSONObject object = serializer.serializeMap(map);
         System.out.println(object);
         JSONDeserializer deserializer = new JSONDeserializer(true, false);
-        User user = deserializer.deserializeToObject(object, User.class);
-        System.out.println(user);
+        Map<String, Object> res = deserializer.deserializeToMap(object, Object.class);
+        System.out.println(res);
     }
 
     public static class Information {

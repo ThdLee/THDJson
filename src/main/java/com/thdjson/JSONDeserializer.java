@@ -68,8 +68,13 @@ public class JSONDeserializer {
         Map<String, T> map = new HashMap<>();
         try {
             for (String key : jsonObject.keys()) {
-                key = isCaseInsensitive ? key.toLowerCase() : key;
-                map.put(key, (T) deserializeJsonValue(jsonObject.getValue(key), clazz));
+                JSONValue value = null;
+                if (isCaseInsensitive) {
+                    value = jsonObject.getValueWithCaseInsensitive(key);
+                } else {
+                    value = jsonObject.getValue(key);
+                }
+                map.put(key, (T) deserializeJsonValue(value, clazz));
             }
         } catch (IllegalAccessException | InstantiationException e) {
             throw new JSONDeserializerException(e.getMessage());
@@ -147,6 +152,14 @@ public class JSONDeserializer {
     }
 
     private Object deserializeJsonValue(JSONValue jsonValue, Class<?> clazz) throws IllegalAccessException, InstantiationException {
+        if (jsonValue == null) return null;
+
+        if (clazz == String.class) {
+            if (jsonValue instanceof JSONElement)
+                return ((JSONElement) jsonValue).getValue();
+            return jsonValue.toString();
+        }
+
         JSONValueType type = jsonValue.getType();
 
         if (jsonValue instanceof JSONElement) {
@@ -173,7 +186,12 @@ public class JSONDeserializer {
                     return (byte) val;
                 } else if (clazz == long.class || clazz == Long.class) {
                     return val;
+                } else if (clazz == Object.class) {
+                    if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE)
+                        return (int) val;
+                    return val;
                 }
+
                 throw new JSONDeserializerException("unknown type: " + clazz);
             } else if (type == JSONValueType.FLOAT) {
                 double val = Double.parseDouble(value);
@@ -183,13 +201,15 @@ public class JSONDeserializer {
                         throw new JSONDeserializerException("float overflow: " + value);
                     }
                     return (float) val;
-                } else if (clazz == double.class || clazz == Double.class) {
+                } else if (clazz == double.class || clazz == Double.class || clazz == Object.class) {
                     return val;
+                } else if (clazz == String.class) {
+                    return value;
                 }
                 throw new JSONDeserializerException("unknown type: " + clazz);
             } else if (type == JSONValueType.BOOL) {
 
-                if (clazz == boolean.class || clazz == Boolean.class) {
+                if (clazz == boolean.class || clazz == Boolean.class || clazz == Object.class) {
                     return Boolean.parseBoolean(value);
                 }
 
@@ -198,7 +218,7 @@ public class JSONDeserializer {
 
                 if ((clazz == char.class || clazz == Character.class) && value.length() == 1) {
                     return value.charAt(0);
-                } else if (clazz == String.class) {
+                } else if (clazz == String.class || clazz == Object.class) {
                     return value;
                 }
                 throw new JSONDeserializerException("unknown type: " + clazz);
