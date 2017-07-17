@@ -12,7 +12,7 @@ import java.util.Map;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 /**
- * Created by Theodore on 2017/7/13.
+ * Created by ThdLee on 2017/7/13.
  */
 public class JSONSerializer {
     
@@ -56,12 +56,12 @@ public class JSONSerializer {
             for (Class<?> cla = obj.getClass(); cla != Object.class; cla = cla.getSuperclass()) {
                 fields = cla.getDeclaredFields();
                 for (Field field : fields) {
-                    if (inFlags(JSONSerializerFeature.ONLY_PUBLIC) &&
+                    if (!inFlags(JSONSerializerFeature.AllowNonPublic) &&
                             (field.getModifiers() & Modifier.PUBLIC) == 0)
                         continue;
 
                     field.setAccessible(true);
-                    String name = inFlags(JSONSerializerFeature.CASE_INSENSITIVE) ?
+                    String name = inFlags(JSONSerializerFeature.CaseInsensitive) ?
                             field.getName().toLowerCase() :
                             field.getName();
 
@@ -95,7 +95,7 @@ public class JSONSerializer {
             for (Object key : map.keySet()) {
                 Object val = map.get(key);
                 JSONValue jsonValue = serializeValue(val, val.getClass());
-                String k = inFlags(JSONSerializerFeature.CASE_INSENSITIVE) ?
+                String k = inFlags(JSONSerializerFeature.CaseInsensitive) ?
                         key.toString().toLowerCase() :
                         key.toString();
                 jsonObject.addKeyAndValue(k, jsonValue);

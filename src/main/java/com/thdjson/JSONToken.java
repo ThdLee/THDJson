@@ -1,7 +1,7 @@
 package com.thdjson;
 
 /**
- * Created by Theodore on 2017/6/6.
+ * Created by ThdLee on 2017/6/6.
  */
 public enum JSONToken {
     /* json token */

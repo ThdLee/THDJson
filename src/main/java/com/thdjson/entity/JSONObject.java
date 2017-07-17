@@ -1,11 +1,12 @@
 package com.thdjson.entity;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by Theodore on 2017/6/7.
+ * Created by ThdLee on 2017/6/7.
  */
 public class JSONObject extends JSONFormat {
 
@@ -17,7 +18,7 @@ public class JSONObject extends JSONFormat {
     private Map<String, String> stringMap;
 
     public JSONObject() {
-        map = new HashMap<String, JSONValue>();
+        map = new LinkedHashMap<String, JSONValue>();
         stringMap = new HashMap<String, String>();
         type = JSONValueType.OBJECT;
     }

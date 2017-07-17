@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Theodore on 2017/7/17.
+ * Created by ThdLee on 2017/7/17.
  */
 public class JSON {
 
@@ -28,6 +28,16 @@ public class JSON {
     }
 
     public static <T> Map<String, T> parseObjectToMap(String json, Class<T> clazz, JSONDeserializerFeature... features) {
+        JSONDeserializer deserializer = new JSONDeserializer(features);
+        return deserializer.deserializeToMap(json, clazz);
+    }
+
+    public static Map<String, Object> parseObjectToMap(String json, Class<?>[] clazz) {
+        JSONDeserializer deserializer = new JSONDeserializer();
+        return deserializer.deserializeToMap(json, clazz);
+    }
+
+    public static Map<String, Object> parseObjectToMap(String json, Class<?>[] clazz, JSONDeserializerFeature... features) {
         JSONDeserializer deserializer = new JSONDeserializer(features);
         return deserializer.deserializeToMap(json, clazz);
     }

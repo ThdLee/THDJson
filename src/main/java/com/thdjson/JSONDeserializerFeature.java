@@ -1,13 +1,15 @@
 package com.thdjson;
 
 /**
- * Created by Theodore on 2017/7/17.
+ * Created by ThdLee on 2017/7/17.
  */
 public enum JSONDeserializerFeature {
     /* Deserialize fields with case insensitive */
-    CASE_INSENSITIVE,
-    /* Only deserialize public fields of object */
-    ONLY_PUBLIC;
+    CaseInsensitive,
+    /* Only deserialize fields with modifiers except public */
+    AllowNonPublic,
+    /* */
+    IgnoreNotMatch;
 
     public final int mask;
 

@@ -1,7 +1,7 @@
 package com.thdjson.exception;
 
 /**
- * Created by Theodore on 2017/6/6.
+ * Created by ThdLee on 2017/6/6.
  */
 public class JSONLexerException extends JSONException {
 

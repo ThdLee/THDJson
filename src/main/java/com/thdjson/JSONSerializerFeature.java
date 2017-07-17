@@ -1,13 +1,13 @@
 package com.thdjson;
 
 /**
- * Created by Theodore on 2017/7/17.
+ * Created by ThdLee on 2017/7/17.
  */
 public enum  JSONSerializerFeature {
     /* Serialize fields with lower case */
-    CASE_INSENSITIVE,
-    /* Only Serialize public fields of object */
-    ONLY_PUBLIC;
+    CaseInsensitive,
+    /* Only Serialize fields with modifiers except public */
+    AllowNonPublic;
 
     public final int mask;
 

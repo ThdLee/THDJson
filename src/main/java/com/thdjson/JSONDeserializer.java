@@ -4,10 +4,12 @@ import com.thdjson.entity.*;
 import com.thdjson.exception.JSONDeserializerException;
 
 import java.lang.reflect.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
- * Created by Theodore on 2017/7/12.
+ * Created by ThdLee on 2017/7/12.
  */
 public class JSONDeserializer {
 
@@ -66,7 +68,7 @@ public class JSONDeserializer {
      * Deserialize string with json format to map.
      * @param json string with json format
      * @param clazz value type in map
-     * @return instance of HashMap
+     * @return instance of HashMap, String is key type
      * @throws JSONDeserializerException if class wrong
      */
     public <T> Map<String, T> deserializeToMap(String json, Class<T> clazz) {
@@ -78,7 +80,7 @@ public class JSONDeserializer {
      * Deserialize json format to map.
      * @param jsonObject instance of JSONObject
      * @param clazz value type in map
-     * @return instance of HashMap
+     * @return instance of HashMap, String is key type
      * @throws JSONDeserializerException if class wrong
      */
     @SuppressWarnings("unchecked")
@@ -87,12 +89,54 @@ public class JSONDeserializer {
         try {
             for (String key : jsonObject.keys()) {
                 JSONValue value = null;
-                if (inFlags(JSONDeserializerFeature.CASE_INSENSITIVE)) {
+                if (inFlags(JSONDeserializerFeature.CaseInsensitive)) {
                     value = jsonObject.getValueWithCaseInsensitive(key);
                 } else {
                     value = jsonObject.getValue(key);
                 }
                 map.put(key, (T) deserializeJsonValue(value, clazz));
+            }
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new JSONDeserializerException(e.getMessage());
+        }
+        return map;
+    }
+
+    /**
+     * Deserialize string with json format to map.
+     * @param json string with json format
+     * @param clazz value types in map
+     * @return instance of HashMap<String, Object>
+     * @throws JSONDeserializerException if class wrong
+     */
+    public Map<String, Object> deserializeToMap(String json, Class<?>[] clazz) {
+        JSONParser parser = new JSONParser();
+        return deserializeToMap(parser.parseObject(json), clazz);
+    }
+
+    /**
+     * Deserialize json format to map.
+     * @param jsonObject instance of JSONObject
+     * @param clazz value types in map
+     * @return instance of HashMap<String, Object>
+     * @throws JSONDeserializerException if class wrong
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> deserializeToMap(JSONObject jsonObject, Class<?>[] clazz) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            int i = 0;
+            for (String key : jsonObject.keys()) {
+                JSONValue value = null;
+                if (inFlags(JSONDeserializerFeature.CaseInsensitive)) {
+                    value = jsonObject.getValueWithCaseInsensitive(key);
+                } else {
+                    value = jsonObject.getValue(key);
+                }
+                Class<?> cla;
+                if (i < clazz.length) cla = clazz[i++];
+                else                  cla = String.class;
+                map.put(key, deserializeJsonValue(value, cla));
             }
         } catch (IllegalAccessException | InstantiationException e) {
             throw new JSONDeserializerException(e.getMessage());
@@ -181,18 +225,20 @@ public class JSONDeserializer {
         for (Class<?> cla = clazz; cla != Object.class; cla = cla.getSuperclass()) {
             fields = cla.getDeclaredFields();
             for (Field field : fields) {
-                if (inFlags(JSONDeserializerFeature.ONLY_PUBLIC) &&
+                if (!inFlags(JSONDeserializerFeature.AllowNonPublic) &&
                         (field.getModifiers() & Modifier.PUBLIC) == 0)
                     continue;
 
                 String name = field.getName();
 
-                JSONValue JSONValue = inFlags(JSONDeserializerFeature.CASE_INSENSITIVE) ?
+                JSONValue JSONValue = inFlags(JSONDeserializerFeature.CaseInsensitive) ?
                         jsonObject.getValueWithCaseInsensitive(name) :
                         jsonObject.getValue(name);
 
-                if (JSONValue == null) continue;
-
+                if (JSONValue == null) {
+                    if (inFlags(JSONDeserializerFeature.IgnoreNotMatch)) continue;
+                    throw new JSONDeserializerException("field \"" + name + "\" cannot match");
+                }
                 Object val = deserializeJsonValue(JSONValue, field.getType());
                 field.setAccessible(true);
                 field.set(obj, val);
@@ -217,6 +263,9 @@ public class JSONDeserializer {
             String value = ((JSONElement) jsonValue).getValue();
 
             if (type == JSONValueType.INT) {
+
+                if (clazz == BigInteger.class) return new BigInteger(value);
+
                 long val = Long.parseLong(value);
 
                 if (clazz == short.class || clazz == Short.class) {
@@ -254,6 +303,9 @@ public class JSONDeserializer {
 
                 throw new JSONDeserializerException("unknown type: " + clazz);
             } else if (type == JSONValueType.FLOAT) {
+
+                if (clazz == BigDecimal.class) return new BigDecimal(value);
+
                 double val = Double.parseDouble(value);
 
                 if (clazz == float.class || clazz == Float.class) {
