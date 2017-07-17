@@ -98,7 +98,7 @@ public class JSONParser {
             } else {
                 value = new JSONElement(token);
             }
-            object.addKeyAndValue(key, value);
+            object.put(key, value);
             if (isFirst) isFirst = false;
         }
     }

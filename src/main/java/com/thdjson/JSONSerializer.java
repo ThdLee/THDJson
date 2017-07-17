@@ -66,7 +66,7 @@ public class JSONSerializer {
                             field.getName();
 
                     value = serializeValue(field.get(obj), field.getType());
-                    jsonObject.addKeyAndValue(name, value);
+                    jsonObject.put(name, value);
                 }
             }
         } catch (IllegalAccessException e) {
@@ -98,7 +98,7 @@ public class JSONSerializer {
                 String k = inFlags(JSONSerializerFeature.CaseInsensitive) ?
                         key.toString().toLowerCase() :
                         key.toString();
-                jsonObject.addKeyAndValue(k, jsonValue);
+                jsonObject.put(k, jsonValue);
             }
         } catch (IllegalAccessException e) {
             throw new JSONSerializerException(e.getMessage());

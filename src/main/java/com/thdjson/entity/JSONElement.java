@@ -3,6 +3,9 @@ package com.thdjson.entity;
 import com.thdjson.JSONToken;
 import com.thdjson.exception.JSONParserException;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 /**
  * Created by ThdLee on 2017/6/7.
  */
@@ -41,7 +44,141 @@ public class JSONElement implements JSONValue {
         this.value = value;
     }
 
-    public String getValue() {
+    public Byte getByte() {
+        if (type == JSONValueType.FLOAT) {
+            return Byte.parseByte(value.substring(0, value.indexOf('.')));
+        }
+        if (type != JSONValueType.INT || value == null) {
+            return null;
+        }
+        return Byte.parseByte(value);
+    }
+
+    public byte getByteValue() {
+        if (type == JSONValueType.FLOAT) {
+            return Byte.parseByte(value.substring(0, value.indexOf('.')));
+        }
+        if (type != JSONValueType.INT)
+            return Byte.parseByte(value);
+        return 0;
+    }
+
+    public Short getShort() {
+        if (type == JSONValueType.FLOAT) {
+            return Short.parseShort(value.substring(0, value.indexOf('.')));
+        }
+        if (type != JSONValueType.INT) {
+            return null;
+        }
+        return Short.parseShort(value);
+    }
+
+    public short getShortValue() {
+        if (type == JSONValueType.FLOAT) {
+            return Short.parseShort(value.substring(0, value.indexOf('.')));
+        }
+        if (type == JSONValueType.INT)
+            return Short.parseShort(value);
+        return 0;
+    }
+
+    public Integer getInt() {
+        if (type == JSONValueType.FLOAT) {
+            return Integer.parseInt(value.substring(0, value.indexOf('.')));
+        }
+        if (type != JSONValueType.INT) {
+            return null;
+        }
+        return Integer.parseInt(value);
+    }
+
+    public int getIntValue() {
+        if (type == JSONValueType.FLOAT) {
+            return Integer.parseInt(value.substring(0, value.indexOf('.')));
+        }
+        if (type == JSONValueType.INT)
+            return Integer.parseInt(value);
+        return 0;
+    }
+
+    public Long getLong() {
+        if (type == JSONValueType.FLOAT) {
+            return Long.parseLong(value.substring(0, value.indexOf('.')));
+        }
+        if (type != JSONValueType.INT) {
+            return null;
+        }
+        return Long.parseLong(value);
+    }
+
+    public long getLongValue() {
+        if (type == JSONValueType.FLOAT) {
+            return Long.parseLong(value.substring(0, value.indexOf('.')));
+        }
+        if (type == JSONValueType.INT)
+            return Long.parseLong(value);
+        return 0;
+    }
+
+    public Boolean getBoolean() {
+        if (type != JSONValueType.BOOL) {
+            return null;
+        }
+        return Boolean.parseBoolean(value);
+    }
+
+    public boolean getBooleanValue() {
+        if (type == JSONValueType.BOOL)
+            return Boolean.parseBoolean(value);
+        return false;
+    }
+
+    public Float getFloat() {
+        if (type != JSONValueType.FLOAT && type != JSONValueType.INT) {
+            return null;
+        }
+        return Float.parseFloat(value);
+    }
+
+    public float getFloatValue() {
+        if (type == JSONValueType.FLOAT || type == JSONValueType.INT)
+            return Float.parseFloat(value);
+        return 0;
+    }
+
+    public Double getDouble() {
+        if (type != JSONValueType.FLOAT && type != JSONValueType.INT) {
+            return null;
+        }
+        return Double.parseDouble(value);
+    }
+
+    public double getDoubleValue() {
+        if (type == JSONValueType.FLOAT || type == JSONValueType.INT)
+            return Double.parseDouble(value);
+        return 0;
+    }
+
+    public BigDecimal getBigDecimal() {
+        if (type != JSONValueType.FLOAT && type != JSONValueType.INT) {
+            return null;
+        }
+        return new BigDecimal(value);
+    }
+
+    public BigInteger getBigInteger() {
+        if (type == JSONValueType.FLOAT) {
+            return new BigInteger(value.substring(0, value.indexOf('.')));
+        }
+        if (type != JSONValueType.INT) {
+            return null;
+        }
+        return new BigInteger(value);
+    }
+
+    public String getString() {
+        if (type == JSONValueType.NULL)
+            return null;
         return value;
     }
 

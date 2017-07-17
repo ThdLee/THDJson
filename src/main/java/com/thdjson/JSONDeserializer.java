@@ -87,12 +87,12 @@ public class JSONDeserializer {
     public <T> Map<String, T> deserializeToMap(JSONObject jsonObject, Class<T> clazz) {
         Map<String, T> map = new HashMap<>();
         try {
-            for (String key : jsonObject.keys()) {
+            for (String key : jsonObject.keySet()) {
                 JSONValue value = null;
                 if (inFlags(JSONDeserializerFeature.CaseInsensitive)) {
-                    value = jsonObject.getValueWithCaseInsensitive(key);
+                    value = jsonObject.getWithCaseInsensitive(key);
                 } else {
-                    value = jsonObject.getValue(key);
+                    value = jsonObject.get(key);
                 }
                 map.put(key, (T) deserializeJsonValue(value, clazz));
             }
@@ -126,12 +126,12 @@ public class JSONDeserializer {
         Map<String, Object> map = new HashMap<>();
         try {
             int i = 0;
-            for (String key : jsonObject.keys()) {
+            for (String key : jsonObject.keySet()) {
                 JSONValue value = null;
                 if (inFlags(JSONDeserializerFeature.CaseInsensitive)) {
-                    value = jsonObject.getValueWithCaseInsensitive(key);
+                    value = jsonObject.getWithCaseInsensitive(key);
                 } else {
-                    value = jsonObject.getValue(key);
+                    value = jsonObject.get(key);
                 }
                 Class<?> cla;
                 if (i < clazz.length) cla = clazz[i++];
@@ -197,7 +197,7 @@ public class JSONDeserializer {
     public <T> List<T> deserializeToList(JSONArray jsonArray, Class<T> clazz) {
         List<T> list = new ArrayList<>();
         try {
-            for (Object jsonValue : jsonArray.getArray()) {
+            for (Object jsonValue : jsonArray) {
                 list.add((T)deserializeJsonValue((JSONValue) jsonValue, clazz));
             }
         }  catch (IllegalAccessException | InstantiationException e) {
@@ -211,7 +211,7 @@ public class JSONDeserializer {
         Object array = Array.newInstance(clazz.getComponentType(), jsonArray.size());
 
         int i = 0;
-        for (Object jsonValue : jsonArray.getArray()) {
+        for (Object jsonValue : jsonArray) {
             Array.set(array, i, deserializeJsonValue((JSONValue) jsonValue, clazz.getComponentType()));
             i++;
         }
@@ -232,8 +232,8 @@ public class JSONDeserializer {
                 String name = field.getName();
 
                 JSONValue JSONValue = inFlags(JSONDeserializerFeature.CaseInsensitive) ?
-                        jsonObject.getValueWithCaseInsensitive(name) :
-                        jsonObject.getValue(name);
+                        jsonObject.getWithCaseInsensitive(name) :
+                        jsonObject.get(name);
 
                 if (JSONValue == null) {
                     if (inFlags(JSONDeserializerFeature.IgnoreNotMatch)) continue;
@@ -252,7 +252,7 @@ public class JSONDeserializer {
 
         if (clazz == String.class) {
             if (jsonValue instanceof JSONElement)
-                return ((JSONElement) jsonValue).getValue();
+                return ((JSONElement) jsonValue).getString();
             return jsonValue.toString();
         }
 
@@ -260,7 +260,7 @@ public class JSONDeserializer {
 
         if (jsonValue instanceof JSONElement) {
 
-            String value = ((JSONElement) jsonValue).getValue();
+            String value = ((JSONElement) jsonValue).getString();
 
             if (type == JSONValueType.INT) {
 
