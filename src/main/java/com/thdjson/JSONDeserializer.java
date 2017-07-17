@@ -11,27 +11,24 @@ import java.util.*;
  */
 public class JSONDeserializer {
 
-    /* Deserialize fields with case insensitive */
-    public static int CASE_INSENSITIVE = 1 << 0;
-    /* Only deserialize public fields of object */
-    public static int ONLY_PUBLIC = 1 << 1 ;
-
-    private int flags;
+    private int features;
     /**
      * Initializes an Json Deserializer.
-     * Default {@code flags} is 0;
+     * Default {@code features} is 0;
      */
     public JSONDeserializer() {
-        flags = 0;
+        features = 0;
     }
 
     /**
-     * Initializes an Json Deserializer with the specified flags.
-     * @param flags {@code CASE_INSENSITIVE} deserialize fields with case insensitive
+     * Initializes an Json Deserializer with the specified features.
+     * @param features {@code CASE_INSENSITIVE} deserialize fields with case insensitive
      *              {@code ONLY_PUBLIC} only deserialize public fields of object
      */
-    public JSONDeserializer(int flags) {
-        this.flags = flags;
+    public JSONDeserializer(JSONDeserializerFeature... features) {
+        for (JSONDeserializerFeature feature : features) {
+            this.features |= feature.getMask();
+        }
     }
 
     /**
@@ -90,7 +87,7 @@ public class JSONDeserializer {
         try {
             for (String key : jsonObject.keys()) {
                 JSONValue value = null;
-                if (inFlags(CASE_INSENSITIVE)) {
+                if (inFlags(JSONDeserializerFeature.CASE_INSENSITIVE)) {
                     value = jsonObject.getValueWithCaseInsensitive(key);
                 } else {
                     value = jsonObject.getValue(key);
@@ -108,7 +105,7 @@ public class JSONDeserializer {
      * @param json string with json format
      * @param clazz class type to return
      * @throws JSONDeserializerException if class wrong
-     */
+     */ 
     public <T> T deserializeToArray(String json, Class<T> clazz) {
         JSONParser parser = new JSONParser();
         return deserializeToArray(parser.parseArray(json), clazz);
@@ -184,11 +181,13 @@ public class JSONDeserializer {
         for (Class<?> cla = clazz; cla != Object.class; cla = cla.getSuperclass()) {
             fields = cla.getDeclaredFields();
             for (Field field : fields) {
-                if (inFlags(ONLY_PUBLIC) && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
+                if (inFlags(JSONDeserializerFeature.ONLY_PUBLIC) &&
+                        (field.getModifiers() & Modifier.PUBLIC) == 0)
+                    continue;
 
                 String name = field.getName();
 
-                JSONValue JSONValue = inFlags(CASE_INSENSITIVE) ?
+                JSONValue JSONValue = inFlags(JSONDeserializerFeature.CASE_INSENSITIVE) ?
                         jsonObject.getValueWithCaseInsensitive(name) :
                         jsonObject.getValue(name);
 
@@ -305,8 +304,8 @@ public class JSONDeserializer {
         throw new JSONDeserializerException("unknown type: " + clazz);
     }
 
-    private boolean inFlags(int flag) {
-        return (flags & flag) == flag;
+    private boolean inFlags(JSONDeserializerFeature feature) {
+        return (features & feature.getMask()) == feature.getMask();
     }
 
 }

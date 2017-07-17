@@ -9,33 +9,29 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+
 /**
  * Created by Theodore on 2017/7/13.
  */
 public class JSONSerializer {
-
-    /* Serialize fields with lower case */
-    public static int CASE_INSENSITIVE = 1 << 0;
-
-    /* Only Serialize public fields of object */
-    public static int ONLY_PUBLIC = 1 << 1 ;
-
-    private int flags;
+    
+    private int features;
     /**
      * Initializes an Json Serializer.
-     * Default {@code flags} is 0;
+     * Default {@code features} is 0;
      */
     public JSONSerializer() {
-        flags = 0;
+        features = 0;
     }
 
     /**
-     * Initializes an Json Serializer with the specified flags.
-     * @param flags {@code CASE_INSENSITIVE} serialize fields with lower case
-     *              {@code ONLY_PUBLIC} only serialize public fields of object
+     * Initializes an Json Serializer with the specified features.
      */
-    public JSONSerializer(int flags) {
-        this.flags = flags;
+    public JSONSerializer(JSONSerializerFeature... features) {
+        for (JSONSerializerFeature feature : features) {
+            this.features |= feature.getMask();
+        }
     }
 
     /**
@@ -43,7 +39,7 @@ public class JSONSerializer {
      * @param obj this object will be converted to string
      * @return string with json format
      */
-    public <T> String serializeObjectToString(T obj) {
+    public String serializeObjectToString(Object obj) {
         return serializeObject(obj).toString();
     }
 
@@ -52,7 +48,7 @@ public class JSONSerializer {
      * @param obj this object will be converted to JsonFormat
      * @return JSONObject instance
      */
-    public <T> JSONObject serializeObject(T obj) {
+    public JSONObject serializeObject(Object obj) {
         JSONObject jsonObject = new JSONObject();
         JSONValue value = null;
         Field[] fields = null;
@@ -60,10 +56,12 @@ public class JSONSerializer {
             for (Class<?> cla = obj.getClass(); cla != Object.class; cla = cla.getSuperclass()) {
                 fields = cla.getDeclaredFields();
                 for (Field field : fields) {
-                    if (inFlags(ONLY_PUBLIC) && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
+                    if (inFlags(JSONSerializerFeature.ONLY_PUBLIC) &&
+                            (field.getModifiers() & Modifier.PUBLIC) == 0)
+                        continue;
 
                     field.setAccessible(true);
-                    String name = inFlags(CASE_INSENSITIVE) ?
+                    String name = inFlags(JSONSerializerFeature.CASE_INSENSITIVE) ?
                             field.getName().toLowerCase() :
                             field.getName();
 
@@ -97,7 +95,7 @@ public class JSONSerializer {
             for (Object key : map.keySet()) {
                 Object val = map.get(key);
                 JSONValue jsonValue = serializeValue(val, val.getClass());
-                String k = inFlags(CASE_INSENSITIVE) ?
+                String k = inFlags(JSONSerializerFeature.CASE_INSENSITIVE) ?
                         key.toString().toLowerCase() :
                         key.toString();
                 jsonObject.addKeyAndValue(k, jsonValue);
@@ -113,7 +111,7 @@ public class JSONSerializer {
      * @param array this array will be converted to string
      * @return string with json format
      */
-    public <T> String serializeArrayToString(T array) {
+    public String serializeArrayToString(Object array) {
         return serializeArray(array).toString();
     }
 
@@ -122,7 +120,7 @@ public class JSONSerializer {
      * @param array this array will be converted to JsonFormat
      * @return JSONArray instance
      */
-    public <T> JSONArray serializeArray(T array) {
+    public JSONArray serializeArray(Object array) {
         if (!array.getClass().isArray()) throw new JSONSerializerException("wrong type: " + array.getClass());
         JSONArray jsonArray = new JSONArray();
         int len = Array.getLength(array);
@@ -142,7 +140,7 @@ public class JSONSerializer {
      * @param list elements in this list will be converted to string
      * @return string with json format
      */
-    public String serializeArraysToString(List list) {
+    public String serializeListToString(List list) {
         return serializeList(list).toString();
     }
 
@@ -202,7 +200,7 @@ public class JSONSerializer {
         return JSONValue;
     }
 
-    private boolean inFlags(int flag) {
-        return (flags & flag) == flag;
+    private boolean inFlags(JSONSerializerFeature feature) {
+        return (features & feature.getMask()) == feature.getMask();
     }
 }
