@@ -70,8 +70,8 @@ public class JSON {
         return parser.parseObject(json);
     }
 
-    public static JSONObject parseObject(String json, JSONDeserializerFeature... features) {
-        JSONParser parser = new JSONParser();
+    public static JSONObject parseObject(String json, boolean caseInsensitive) {
+        JSONParser parser = new JSONParser(caseInsensitive);
         return parser.parseObject(json);
     }
 
@@ -80,8 +80,8 @@ public class JSON {
         return parser.parseArray(json);
     }
 
-    public static JSONArray parseArray(String json, JSONDeserializerFeature... features) {
-        JSONParser parser = new JSONParser();
+    public static JSONArray parseArray(String json, boolean caseInsensitive) {
+        JSONParser parser = new JSONParser(caseInsensitive);
         return parser.parseArray(json);
     }
 
@@ -110,4 +110,45 @@ public class JSON {
         }
         return serializer.serializeObjectToString(object);
     }
+
+    public static JSONObject toJSONObject(Object object) {
+        JSONSerializer serializer = new JSONSerializer();
+        return serializer.serializeObject(object);
+    }
+
+    public static JSONObject toJSONObject(Object object, JSONSerializerFeature... features) {
+        JSONSerializer serializer = new JSONSerializer(features);
+        return serializer.serializeObject(object);
+    }
+
+    public static JSONObject toJSONObject(Map map) {
+        JSONSerializer serializer = new JSONSerializer();
+        return serializer.serializeMap(map);
+    }
+
+    public static JSONObject toJSONObject(Map map, JSONSerializerFeature... features) {
+        JSONSerializer serializer = new JSONSerializer(features);
+        return serializer.serializeMap(map);
+    }
+
+    public static JSONArray toJSONArray(Object[] objects) {
+        JSONSerializer serializer = new JSONSerializer();
+        return serializer.serializeArray(objects);
+    }
+
+    public static JSONArray toJSONArray(Object[] objects, JSONSerializerFeature... features) {
+        JSONSerializer serializer = new JSONSerializer(features);
+        return serializer.serializeArray(objects);
+    }
+
+    public static JSONArray toJSONArray(List list) {
+        JSONSerializer serializer = new JSONSerializer();
+        return serializer.serializeList(list);
+    }
+
+    public static JSONArray toJSONArray(List list, JSONSerializerFeature... features) {
+        JSONSerializer serializer = new JSONSerializer(features);
+        return serializer.serializeList(list);
+    }
+
 }

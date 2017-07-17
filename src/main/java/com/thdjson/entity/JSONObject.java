@@ -1,36 +1,29 @@
 package com.thdjson.entity;
 
-import com.thdjson.JSON;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by ThdLee on 2017/6/7.
  */
 public class JSONObject extends JSONFormat implements Map<String, JSONValue>, Cloneable, Serializable {
 
-    private JSONValueType type;
+    private final JSONValueType type = JSONValueType.OBJECT;;
 
     private LinkedHashMap<String, JSONValue> map;
 
-    /* use for case insensitive */
-    private HashMap<String, String> stringMap;
-
     public JSONObject() {
         map = new LinkedHashMap<>();
-        stringMap = new HashMap<>();
-        type = JSONValueType.OBJECT;
     }
 
     public JSONObject(LinkedHashMap<String, JSONValue> map) {
         this.map = map;
-        stringMap = new HashMap<>();
-        for (String key : map.keySet()) {
-            stringMap.put(key.toLowerCase(), key);
-        }
     }
 
     public int size() {
@@ -53,24 +46,15 @@ public class JSONObject extends JSONFormat implements Map<String, JSONValue>, Cl
         return map.get(key);
     }
 
-    public JSONValue getWithCaseInsensitive(String key) {
-        return map.get(stringMap.get(key.toLowerCase()));
-    }
-
     public JSONValueType getType() {
         return type;
     }
 
-
-
     public JSONValue put(String key, JSONValue value) {
-        stringMap.put(key.toLowerCase(), key);
         return map.put(key, value);
     }
 
-
     public JSONObject fluentPut(String key, JSONValue value) {
-        stringMap.put(key.toLowerCase(), key);
         map.put(key, value);
         return this;
     }

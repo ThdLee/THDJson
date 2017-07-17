@@ -1,3 +1,4 @@
+import com.thdjson.JSON;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -11,7 +12,13 @@ public class JSONTest {
 
     @Test
     public void test() {
-
-         System.out.println(new BigInteger("31431.324"));
+        User son = new User("Ted", 12, null);
+        User daughter = new User("Cherry", 6, null);
+        User[] users = {son, daughter};
+        User father = new User("Harry", 38, users);
+        String json = JSON.toJSONString(father);
+        System.out.println(json);
+        User user = JSON.parseObject(json, User.class);
+        System.out.println(user);
     }
 }

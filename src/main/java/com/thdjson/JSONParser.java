@@ -14,6 +14,16 @@ public class JSONParser {
 
     private JSONToken token;    // current token to handle
 
+    private boolean isCaseInsensitive;
+
+    public JSONParser() {
+        isCaseInsensitive = false;
+    }
+
+    public JSONParser(boolean caseInsensitive) {
+        isCaseInsensitive = caseInsensitive;
+    }
+
     /**
      * Covert json string to JSONFormat.
      * @param json string with json format
@@ -98,7 +108,7 @@ public class JSONParser {
             } else {
                 value = new JSONElement(token);
             }
-            object.put(key, value);
+            object.put(isCaseInsensitive ? key.toLowerCase() : key, value);
             if (isFirst) isFirst = false;
         }
     }

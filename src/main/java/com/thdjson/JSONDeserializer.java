@@ -41,7 +41,7 @@ public class JSONDeserializer {
      * @throws JSONDeserializerException if class wrong
      */
     public <T> T deserializeToObject(String json, Class<T> clazz) {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(inFeatures(JSONDeserializerFeature.CaseInsensitive));
         return deserializeToObject(parser.parseObject(json), clazz);
     }
 
@@ -72,7 +72,7 @@ public class JSONDeserializer {
      * @throws JSONDeserializerException if class wrong
      */
     public <T> Map<String, T> deserializeToMap(String json, Class<T> clazz) {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(inFeatures(JSONDeserializerFeature.CaseInsensitive));
         return deserializeToMap(parser.parseObject(json), clazz);
     }
 
@@ -88,12 +88,7 @@ public class JSONDeserializer {
         Map<String, T> map = new HashMap<>();
         try {
             for (String key : jsonObject.keySet()) {
-                JSONValue value = null;
-                if (inFlags(JSONDeserializerFeature.CaseInsensitive)) {
-                    value = jsonObject.getWithCaseInsensitive(key);
-                } else {
-                    value = jsonObject.get(key);
-                }
+                JSONValue value = jsonObject.get(key);
                 map.put(key, (T) deserializeJsonValue(value, clazz));
             }
         } catch (IllegalAccessException | InstantiationException e) {
@@ -110,7 +105,7 @@ public class JSONDeserializer {
      * @throws JSONDeserializerException if class wrong
      */
     public Map<String, Object> deserializeToMap(String json, Class<?>[] clazz) {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(inFeatures(JSONDeserializerFeature.CaseInsensitive));
         return deserializeToMap(parser.parseObject(json), clazz);
     }
 
@@ -128,8 +123,8 @@ public class JSONDeserializer {
             int i = 0;
             for (String key : jsonObject.keySet()) {
                 JSONValue value = null;
-                if (inFlags(JSONDeserializerFeature.CaseInsensitive)) {
-                    value = jsonObject.getWithCaseInsensitive(key);
+                if (inFeatures(JSONDeserializerFeature.CaseInsensitive)) {
+                    value = jsonObject.get(key);
                 } else {
                     value = jsonObject.get(key);
                 }
@@ -151,7 +146,7 @@ public class JSONDeserializer {
      * @throws JSONDeserializerException if class wrong
      */ 
     public <T> T deserializeToArray(String json, Class<T> clazz) {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(inFeatures(JSONDeserializerFeature.CaseInsensitive));
         return deserializeToArray(parser.parseArray(json), clazz);
     }
 
@@ -182,7 +177,7 @@ public class JSONDeserializer {
      * @throws JSONDeserializerException if class wrong
      */
     public <T> List<T> deserializeToList(String json, Class<T> clazz) {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(inFeatures(JSONDeserializerFeature.CaseInsensitive));
         return deserializeToList(parser.parseArray(json), clazz);
     }
 
@@ -225,18 +220,18 @@ public class JSONDeserializer {
         for (Class<?> cla = clazz; cla != Object.class; cla = cla.getSuperclass()) {
             fields = cla.getDeclaredFields();
             for (Field field : fields) {
-                if (!inFlags(JSONDeserializerFeature.AllowNonPublic) &&
+                if (!inFeatures(JSONDeserializerFeature.AllowNonPublic) &&
                         (field.getModifiers() & Modifier.PUBLIC) == 0)
                     continue;
 
                 String name = field.getName();
 
-                JSONValue JSONValue = inFlags(JSONDeserializerFeature.CaseInsensitive) ?
-                        jsonObject.getWithCaseInsensitive(name) :
+                JSONValue JSONValue = inFeatures(JSONDeserializerFeature.CaseInsensitive) ?
+                        jsonObject.get(name.toLowerCase()) :
                         jsonObject.get(name);
 
                 if (JSONValue == null) {
-                    if (inFlags(JSONDeserializerFeature.IgnoreNotMatch)) continue;
+                    if (inFeatures(JSONDeserializerFeature.IgnoreNotMatch)) continue;
                     throw new JSONDeserializerException("field \"" + name + "\" cannot match");
                 }
                 Object val = deserializeJsonValue(JSONValue, field.getType());
@@ -356,7 +351,7 @@ public class JSONDeserializer {
         throw new JSONDeserializerException("unknown type: " + clazz);
     }
 
-    private boolean inFlags(JSONDeserializerFeature feature) {
+    private boolean inFeatures(JSONDeserializerFeature feature) {
         return (features & feature.getMask()) == feature.getMask();
     }
 

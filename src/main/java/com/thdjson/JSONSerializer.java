@@ -56,12 +56,12 @@ public class JSONSerializer {
             for (Class<?> cla = obj.getClass(); cla != Object.class; cla = cla.getSuperclass()) {
                 fields = cla.getDeclaredFields();
                 for (Field field : fields) {
-                    if (!inFlags(JSONSerializerFeature.AllowNonPublic) &&
+                    if (!inFeatures(JSONSerializerFeature.AllowNonPublic) &&
                             (field.getModifiers() & Modifier.PUBLIC) == 0)
                         continue;
 
                     field.setAccessible(true);
-                    String name = inFlags(JSONSerializerFeature.CaseInsensitive) ?
+                    String name = inFeatures(JSONSerializerFeature.CaseInsensitive) ?
                             field.getName().toLowerCase() :
                             field.getName();
 
@@ -95,7 +95,7 @@ public class JSONSerializer {
             for (Object key : map.keySet()) {
                 Object val = map.get(key);
                 JSONValue jsonValue = serializeValue(val, val.getClass());
-                String k = inFlags(JSONSerializerFeature.CaseInsensitive) ?
+                String k = inFeatures(JSONSerializerFeature.CaseInsensitive) ?
                         key.toString().toLowerCase() :
                         key.toString();
                 jsonObject.put(k, jsonValue);
@@ -200,7 +200,7 @@ public class JSONSerializer {
         return JSONValue;
     }
 
-    private boolean inFlags(JSONSerializerFeature feature) {
+    private boolean inFeatures(JSONSerializerFeature feature) {
         return (features & feature.getMask()) == feature.getMask();
     }
 }
