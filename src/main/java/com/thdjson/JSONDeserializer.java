@@ -12,33 +12,42 @@ import java.util.*;
 public class JSONDeserializer {
 
     /* Deserialize fields with case insensitive */
-    private boolean isCaseInsensitive;
-
+    public static int CASE_INSENSITIVE = 1 << 0;
     /* Only deserialize public fields of object */
-    private boolean isOnlyPublic;
+    public static int ONLY_PUBLIC = 1 << 1 ;
 
+    private int flags;
     /**
      * Initializes an Json Deserializer.
+     * Default {@code flags} is 0;
      */
     public JSONDeserializer() {
-        isCaseInsensitive = true;
-        isOnlyPublic = true;
+        flags = 0;
     }
 
     /**
      * Initializes an Json Deserializer with the specified flags.
-     * @param caseInsensitive {@code true} deserialize fields with case insensitive
-     *                        {@code false} otherwise
-     * @param onlyPublic {@code true} only deserialize public fields of object
-     *                   {@code false} deserialize all kinds of fields of object
+     * @param flags {@code CASE_INSENSITIVE} deserialize fields with case insensitive
+     *              {@code ONLY_PUBLIC} only deserialize public fields of object
      */
-    public JSONDeserializer(boolean caseInsensitive, boolean onlyPublic) {
-        isCaseInsensitive = caseInsensitive;
-        isOnlyPublic = onlyPublic;
+    public JSONDeserializer(int flags) {
+        this.flags = flags;
     }
 
     /**
-     * Deserialize json format with case insensitive option to class instance.
+     * Deserialize string with json format to class instance.
+     * @param json string with json format
+     * @param clazz class type to return
+     * @return Generic T instance
+     * @throws JSONDeserializerException if class wrong
+     */
+    public <T> T deserializeToObject(String json, Class<T> clazz) {
+        JSONParser parser = new JSONParser();
+        return deserializeToObject(parser.parseObject(json), clazz);
+    }
+
+    /**
+     * Deserialize json format to class instance.
      * @param jsonObject instance of JSONObject
      * @param clazz class type to return
      * @return Generic T instance
@@ -57,9 +66,21 @@ public class JSONDeserializer {
     }
 
     /**
-     * Deserialize json format to class instance.
+     * Deserialize string with json format to map.
+     * @param json string with json format
+     * @param clazz value type in map
+     * @return instance of HashMap
+     * @throws JSONDeserializerException if class wrong
+     */
+    public <T> Map<String, T> deserializeToMap(String json, Class<T> clazz) {
+        JSONParser parser = new JSONParser();
+        return deserializeToMap(parser.parseObject(json), clazz);
+    }
+
+    /**
+     * Deserialize json format to map.
      * @param jsonObject instance of JSONObject
-     * @param clazz class type to return
+     * @param clazz value type in map
      * @return instance of HashMap
      * @throws JSONDeserializerException if class wrong
      */
@@ -69,7 +90,7 @@ public class JSONDeserializer {
         try {
             for (String key : jsonObject.keys()) {
                 JSONValue value = null;
-                if (isCaseInsensitive) {
+                if (inFlags(CASE_INSENSITIVE)) {
                     value = jsonObject.getValueWithCaseInsensitive(key);
                 } else {
                     value = jsonObject.getValue(key);
@@ -83,7 +104,18 @@ public class JSONDeserializer {
     }
 
     /**
-     * Deserialize json format to class instance.
+     * Deserialize string with json format to array.
+     * @param json string with json format
+     * @param clazz class type to return
+     * @throws JSONDeserializerException if class wrong
+     */
+    public <T> T deserializeToArray(String json, Class<T> clazz) {
+        JSONParser parser = new JSONParser();
+        return deserializeToArray(parser.parseArray(json), clazz);
+    }
+
+    /**
+     * Deserialize json format to array.
      * @param jsonArray instance of JSONArray
      * @param clazz class type to return
      * @throws JSONDeserializerException if class wrong
@@ -102,15 +134,27 @@ public class JSONDeserializer {
     }
 
     /**
-     * Deserialize json format to class instance.
+     * Deserialize string with json format to List.
+     * @param json instance of JSONArray
+     * @param clazz element type in List
+     * @return instance of ArrayList
+     * @throws JSONDeserializerException if class wrong
+     */
+    public <T> List<T> deserializeToList(String json, Class<T> clazz) {
+        JSONParser parser = new JSONParser();
+        return deserializeToList(parser.parseArray(json), clazz);
+    }
+
+    /**
+     * Deserialize json format to List.
      * @param jsonArray instance of JSONArray
-     * @param clazz class type to return
-     * @return instance of LinkedList
+     * @param clazz element type in List
+     * @return instance of ArrayList
      * @throws JSONDeserializerException if class wrong
      */
     @SuppressWarnings("unchecked")
     public <T> List<T> deserializeToList(JSONArray jsonArray, Class<T> clazz) {
-        List<T> list = new LinkedList<>();
+        List<T> list = new ArrayList<>();
         try {
             for (Object jsonValue : jsonArray.getArray()) {
                 list.add((T)deserializeJsonValue((JSONValue) jsonValue, clazz));
@@ -124,6 +168,7 @@ public class JSONDeserializer {
     @SuppressWarnings("unchecked")
     private <T> T deserializeJsonArray(JSONArray jsonArray, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         Object array = Array.newInstance(clazz.getComponentType(), jsonArray.size());
+
         int i = 0;
         for (Object jsonValue : jsonArray.getArray()) {
             Array.set(array, i, deserializeJsonValue((JSONValue) jsonValue, clazz.getComponentType()));
@@ -139,10 +184,16 @@ public class JSONDeserializer {
         for (Class<?> cla = clazz; cla != Object.class; cla = cla.getSuperclass()) {
             fields = cla.getDeclaredFields();
             for (Field field : fields) {
-                if (isOnlyPublic && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
+                if (inFlags(ONLY_PUBLIC) && (field.getModifiers() & Modifier.PUBLIC) == 0) continue;
+
                 String name = field.getName();
-                JSONValue JSONValue = isCaseInsensitive ? jsonObject.getValueWithCaseInsensitive(name) : jsonObject.getValue(name);
+
+                JSONValue JSONValue = inFlags(CASE_INSENSITIVE) ?
+                        jsonObject.getValueWithCaseInsensitive(name) :
+                        jsonObject.getValue(name);
+
                 if (JSONValue == null) continue;
+
                 Object val = deserializeJsonValue(JSONValue, field.getType());
                 field.setAccessible(true);
                 field.set(obj, val);
@@ -170,25 +221,35 @@ public class JSONDeserializer {
                 long val = Long.parseLong(value);
 
                 if (clazz == short.class || clazz == Short.class) {
+
                     if (val < Short.MIN_VALUE || val > Short.MAX_VALUE) {
                         throw new JSONDeserializerException("short overflow: " + value);
                     }
+
                     return (short) val;
                 } else if (clazz == int.class || clazz == Integer.class) {
+
                     if (val < Integer.MIN_VALUE || val > Integer.MAX_VALUE) {
                         throw new JSONDeserializerException("int overflow: " + value);
                     }
+
                     return (int) val;
                 } else if (clazz == byte.class || clazz == byte.class) {
+
                     if (val < Byte.MIN_VALUE || val > Byte.MAX_VALUE) {
                         throw new JSONDeserializerException("byte overflow: " + value);
                     }
+
                     return (byte) val;
                 } else if (clazz == long.class || clazz == Long.class) {
+
                     return val;
+
                 } else if (clazz == Object.class) {
+
                     if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE)
                         return (int) val;
+
                     return val;
                 }
 
@@ -197,15 +258,18 @@ public class JSONDeserializer {
                 double val = Double.parseDouble(value);
 
                 if (clazz == float.class || clazz == Float.class) {
+
                     if (val < Float.MIN_VALUE || val > Float.MAX_VALUE) {
                         throw new JSONDeserializerException("float overflow: " + value);
                     }
+
                     return (float) val;
                 } else if (clazz == double.class || clazz == Double.class || clazz == Object.class) {
                     return val;
                 } else if (clazz == String.class) {
                     return value;
                 }
+
                 throw new JSONDeserializerException("unknown type: " + clazz);
             } else if (type == JSONValueType.BOOL) {
 
@@ -221,35 +285,28 @@ public class JSONDeserializer {
                 } else if (clazz == String.class || clazz == Object.class) {
                     return value;
                 }
+
                 throw new JSONDeserializerException("unknown type: " + clazz);
             } else if (type == JSONValueType.NULL && clazz.getSuperclass() == Object.class) {
                 return null;
             }
+
             throw new JSONDeserializerException("unknown type: " + clazz);
         } else if (jsonValue instanceof JSONArray) {
+
             return deserializeJsonArray((JSONArray) jsonValue, clazz);
+
         } else if (jsonValue instanceof JSONObject) {
+
             return deserializeJsonObject((JSONObject) jsonValue, clazz);
+
         }
 
         throw new JSONDeserializerException("unknown type: " + clazz);
     }
 
-    public boolean isCaseInsensitive() {
-        return isCaseInsensitive;
-    }
-
-    public void setCaseInsensitive(boolean caseInsensitive) {
-        isCaseInsensitive = caseInsensitive;
-    }
-
-
-    public boolean isOnlyPublic() {
-        return isOnlyPublic;
-    }
-
-    public void setOnlyPublic(boolean onlyPublic) {
-        isOnlyPublic = onlyPublic;
+    private boolean inFlags(int flag) {
+        return (flags & flag) == flag;
     }
 
 }

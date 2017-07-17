@@ -52,10 +52,10 @@ public class JSONDeserializeTest {
     public void testOnlyPublic() {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = parser.parseObject(json);
-        JSONDeserializer deserializer = new JSONDeserializer(true, true);
+        JSONDeserializer deserializer = new JSONDeserializer(JSONDeserializer.CASE_INSENSITIVE | JSONDeserializer.ONLY_PUBLIC);
         Information test = deserializer.deserializeToObject(jsonObject, Information.class);
         System.out.println(test);
-        JSONSerializer serializer = new JSONSerializer(true, true);
+        JSONSerializer serializer = new JSONSerializer(JSONDeserializer.CASE_INSENSITIVE | JSONDeserializer.ONLY_PUBLIC);
         System.out.println(serializer.serializeObject(test));
     }
 
@@ -63,10 +63,10 @@ public class JSONDeserializeTest {
     public void testNotOnlyPublic() {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = parser.parseObject(json);
-        JSONDeserializer deserializer = new JSONDeserializer(true, false);
+        JSONDeserializer deserializer = new JSONDeserializer(JSONDeserializer.CASE_INSENSITIVE);
         Information test = deserializer.deserializeToObject(jsonObject, Information.class);
         System.out.println(test);
-        JSONSerializer serializer = new JSONSerializer(true, false);
+        JSONSerializer serializer = new JSONSerializer(JSONDeserializer.CASE_INSENSITIVE);
         System.out.println(serializer.serializeObject(test));
     }
 
@@ -74,10 +74,10 @@ public class JSONDeserializeTest {
     public void testSubClass() {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = parser.parseObject(json);
-        JSONDeserializer deserializer = new JSONDeserializer(true, true);
+        JSONDeserializer deserializer = new JSONDeserializer(JSONDeserializer.CASE_INSENSITIVE | JSONDeserializer.ONLY_PUBLIC);
         Information test = deserializer.deserializeToObject(jsonObject, VipInfo.class);
         System.out.println(test);
-        JSONSerializer serializer = new JSONSerializer(true, false);
+        JSONSerializer serializer = new JSONSerializer(JSONDeserializer.CASE_INSENSITIVE);
         System.out.println(serializer.serializeObject(test));
     }
 
@@ -86,10 +86,10 @@ public class JSONDeserializeTest {
         LinkedList<User> list = new LinkedList<>();
         list.add(new User(1, "123", "a"));
         list.add(new User(2, "123", "b"));
-        JSONSerializer serializer = new JSONSerializer(true, false);
+        JSONSerializer serializer = new JSONSerializer(JSONDeserializer.CASE_INSENSITIVE);
         JSONArray array = serializer.serializeList(list);
         System.out.println(array);
-        JSONDeserializer deserializer = new JSONDeserializer(true, false);
+        JSONDeserializer deserializer = new JSONDeserializer(JSONDeserializer.CASE_INSENSITIVE);
         List users = deserializer.deserializeToList(array, User.class);
         System.out.println(users.get(0).toString() + users.get(1).toString());
     }
@@ -100,10 +100,10 @@ public class JSONDeserializeTest {
         map.put("Id", (Integer)233);
         map.put("countrycode", "1");
         map.put("countryname", "AL");
-        JSONSerializer serializer = new JSONSerializer(true, false);
+        JSONSerializer serializer = new JSONSerializer(JSONDeserializer.CASE_INSENSITIVE);
         JSONObject object = serializer.serializeMap(map);
         System.out.println(object);
-        JSONDeserializer deserializer = new JSONDeserializer(true, false);
+        JSONDeserializer deserializer = new JSONDeserializer(JSONDeserializer.CASE_INSENSITIVE);
         Map<String, Object> res = deserializer.deserializeToMap(object, Object.class);
         System.out.println(res);
     }
