@@ -58,7 +58,7 @@ public class JSONDeserializer {
         T result = null;
         try {
             result = deserializeJsonObject((JSONObject) jsonObject, clazz);
-        } catch (IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new JSONDeserializerException(e.getMessage());
         }
         return result;
@@ -91,7 +91,7 @@ public class JSONDeserializer {
                 JSONValue value = jsonObject.get(key);
                 map.put(key, (T) deserializeJsonValue(value, clazz));
             }
-        } catch (IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new JSONDeserializerException(e.getMessage());
         }
         return map;
@@ -133,7 +133,7 @@ public class JSONDeserializer {
                 else                  cla = String.class;
                 map.put(key, deserializeJsonValue(value, cla));
             }
-        } catch (IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new JSONDeserializerException(e.getMessage());
         }
         return map;
@@ -163,7 +163,7 @@ public class JSONDeserializer {
         T result = null;
         try {
             result = deserializeJsonArray((JSONArray) jsonArray, clazz);
-        } catch (IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new JSONDeserializerException(e.getMessage());
         }
         return result;
@@ -195,14 +195,14 @@ public class JSONDeserializer {
             for (Object jsonValue : jsonArray) {
                 list.add((T)deserializeJsonValue((JSONValue) jsonValue, clazz));
             }
-        }  catch (IllegalAccessException | InstantiationException e) {
+        }  catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new JSONDeserializerException(e.getMessage());
         }
         return list;
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T deserializeJsonArray(JSONArray jsonArray, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+    private <T> T deserializeJsonArray(JSONArray jsonArray, Class<T> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         Object array = Array.newInstance(clazz.getComponentType(), jsonArray.size());
 
         int i = 0;
@@ -214,8 +214,25 @@ public class JSONDeserializer {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T deserializeJsonObject(JSONObject jsonObject, Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        T obj = clazz.newInstance();
+    private <T> T deserializeJsonObject(JSONObject jsonObject, Class<T> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        Constructor<?> cons[] = clazz.getConstructors();
+        Class<?> classes[] = cons[0].getParameterTypes();
+
+        Object params[] = new Object[classes.length];
+        for (int i = 0; i < classes.length; i++) {
+            if (classes[i].isPrimitive()) {
+                if (classes[i] == boolean.class) {
+                    params[i] = false;
+                } else {
+                    params[i] = 0;
+                }
+            } else {
+                params[i] = null;
+            }
+
+        }
+        T obj = (T) cons[0].newInstance(params);
+
         Field[] fields = null;
         for (Class<?> cla = clazz; cla != Object.class; cla = cla.getSuperclass()) {
             fields = cla.getDeclaredFields();
@@ -234,6 +251,7 @@ public class JSONDeserializer {
                     if (inFeatures(JSONDeserializerFeature.IgnoreNotMatch)) continue;
                     throw new JSONDeserializerException("field \"" + name + "\" cannot match");
                 }
+
                 Object val = deserializeJsonValue(JSONValue, field.getType());
                 field.setAccessible(true);
                 field.set(obj, val);
@@ -242,7 +260,7 @@ public class JSONDeserializer {
         return obj;
     }
 
-    private Object deserializeJsonValue(JSONValue jsonValue, Class<?> clazz) throws IllegalAccessException, InstantiationException {
+    private Object deserializeJsonValue(JSONValue jsonValue, Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         if (jsonValue == null) return null;
 
         if (clazz == String.class) {

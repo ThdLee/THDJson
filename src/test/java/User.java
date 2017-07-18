@@ -7,9 +7,9 @@ public class User {
     public int age;
     public User[] children;
 
-    public User() {
-
-    }
+//    public User() {
+//
+//    }
 
     public User(String name, int age, User[] children) {
         this.name = name;
