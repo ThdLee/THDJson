@@ -122,12 +122,7 @@ public class JSONDeserializer {
         try {
             int i = 0;
             for (String key : jsonObject.keySet()) {
-                JSONValue value = null;
-                if (inFeatures(JSONDeserializerFeature.CaseInsensitive)) {
-                    value = jsonObject.get(key);
-                } else {
-                    value = jsonObject.get(key);
-                }
+                JSONValue value = jsonObject.get(key);
                 Class<?> cla;
                 if (i < clazz.length) cla = clazz[i++];
                 else                  cla = String.class;
