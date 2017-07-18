@@ -1,7 +1,7 @@
 package com.thdjson.entity;
 
 /**
- * Created by ThdLee on 2017/6/7.
+ * @author ThdLee
  */
 public interface JSONValue {
 

@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Created by ThdLee on 2017/6/6.
+ * @author ThdLee
  */
 public class JSONLexer {
     private static final char EOI = 0x1A;

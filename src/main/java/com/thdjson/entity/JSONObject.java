@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by ThdLee on 2017/6/7.
+ * @author ThdLee
  */
 public class JSONObject extends JSONFormat implements Map<String, JSONValue>, Cloneable, Serializable {
 

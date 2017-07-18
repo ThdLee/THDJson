@@ -1,7 +1,7 @@
 package com.thdjson.exception;
 
 /**
- * Created by ThdLee on 2017/6/8.
+ * @author ThdLee
  */
 public class JSONException extends RuntimeException {
 

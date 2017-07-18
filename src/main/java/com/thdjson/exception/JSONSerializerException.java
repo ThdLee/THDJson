@@ -1,7 +1,7 @@
 package com.thdjson.exception;
 
 /**
- * Created by ThdLee on 2017/7/13.
+ * @author ThdLee
  */
 public class JSONSerializerException extends JSONException {
 

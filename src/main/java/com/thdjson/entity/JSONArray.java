@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 /**
- * Created by ThdLee on 2017/6/7.
+ * @author ThdLee
  */
 public class JSONArray extends JSONFormat implements List<JSONValue>, Cloneable, RandomAccess, Serializable {
 

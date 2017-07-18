@@ -1,10 +1,10 @@
 package com.thdjson;
 
 /**
- * Created by ThdLee on 2017/7/17.
+ * @author ThdLee
  */
 public enum JSONDeserializerFeature {
-    /* Deserialize key string with case insensitive */
+    /* Deserialize key string with lower case */
     CaseInsensitive,
     /* Only deserialize fields with modifiers except public */
     AllowNonPublic,

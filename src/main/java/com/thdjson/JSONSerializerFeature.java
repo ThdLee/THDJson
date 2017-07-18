@@ -1,7 +1,7 @@
 package com.thdjson;
 
 /**
- * Created by ThdLee on 2017/7/17.
+ * @author ThdLee
  */
 public enum  JSONSerializerFeature {
     /* Serialize key string with lower case */

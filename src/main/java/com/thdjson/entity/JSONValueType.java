@@ -1,7 +1,7 @@
 package com.thdjson.entity;
 
 /**
- * Created by ThdLee on 2017/6/9.
+ * @author ThdLee
  */
 public enum JSONValueType {
     OBJECT("object"),

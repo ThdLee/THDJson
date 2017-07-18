@@ -4,7 +4,7 @@ import com.thdjson.entity.*;
 import com.thdjson.exception.JSONParserException;
 
 /**
- * Created by ThdLee on 2017/6/7.
+ * @author ThdLee
  */
 public class JSONParser {
 
@@ -29,6 +29,7 @@ public class JSONParser {
      * @param json string with json format
      */
     public JSONFormat parseJson(String json) {
+        if (json == null) return null;
         init(json);
         nextToken();
         if (token == JSONToken.LBRACE) {
@@ -46,6 +47,7 @@ public class JSONParser {
      * @param json string with json format
      */
     public JSONArray parseArray(String json) {
+        if (json == null) return null;
         JSONFormat jsonFormat = parseJson(json);
         assert jsonFormat instanceof JSONArray;
         return (JSONArray) jsonFormat;
@@ -56,6 +58,7 @@ public class JSONParser {
      * @param json string with json format
      */
     public JSONObject parseObject(String json) {
+        if (json == null) return null;
         JSONFormat jsonFormat = parseJson(json);
         assert jsonFormat instanceof JSONObject;
         return (JSONObject) jsonFormat;

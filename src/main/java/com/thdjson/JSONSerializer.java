@@ -9,10 +9,8 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-
 /**
- * Created by ThdLee on 2017/7/13.
+ * @author ThdLee
  */
 public class JSONSerializer {
     
@@ -49,6 +47,7 @@ public class JSONSerializer {
      * @return JSONObject instance
      */
     public JSONObject serializeObject(Object obj) {
+        if (obj == null) return null;
         JSONObject jsonObject = new JSONObject();
         JSONValue value = null;
         Field[] fields = null;
@@ -90,6 +89,7 @@ public class JSONSerializer {
      * @return JSONObject instance
      */
     public JSONObject serializeMap(Map map) {
+        if (map == null) return null;
         JSONObject jsonObject = new JSONObject();
         try {
             for (Object key : map.keySet()) {
@@ -121,6 +121,7 @@ public class JSONSerializer {
      * @return JSONArray instance
      */
     public JSONArray serializeArray(Object array) {
+        if (array == null) return null;
         if (!array.getClass().isArray()) throw new JSONSerializerException("wrong type: " + array.getClass());
         JSONArray jsonArray = new JSONArray();
         int len = Array.getLength(array);
@@ -150,6 +151,7 @@ public class JSONSerializer {
      * @return JSONArray instance
      */
     public JSONArray serializeList(List list) {
+        if (list == null) return null;
         JSONArray jsonArray = new JSONArray();
         try {
             for (Object obj : list) {

@@ -9,7 +9,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 /**
- * Created by ThdLee on 2017/7/12.
+ * @author ThdLee
  */
 public class JSONDeserializer {
 
@@ -53,6 +53,7 @@ public class JSONDeserializer {
      * @throws JSONDeserializerException if class wrong
      */
     public <T> T deserializeToObject(JSONObject jsonObject, Class<T> clazz) {
+        if (jsonObject == null) return null;
         if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()) || clazz.isArray())
             throw new JSONDeserializerException("wrong type: " + clazz);
         T result = null;
@@ -85,6 +86,7 @@ public class JSONDeserializer {
      */
     @SuppressWarnings("unchecked")
     public <T> Map<String, T> deserializeToMap(JSONObject jsonObject, Class<T> clazz) {
+        if (jsonObject == null) return null;
         Map<String, T> map = new HashMap<>();
         try {
             for (String key : jsonObject.keySet()) {
@@ -118,6 +120,7 @@ public class JSONDeserializer {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> deserializeToMap(JSONObject jsonObject, Class<?>[] clazz) {
+        if (jsonObject == null) return null;
         Map<String, Object> map = new HashMap<>();
         try {
             int i = 0;
@@ -153,6 +156,7 @@ public class JSONDeserializer {
      */
     @SuppressWarnings("unchecked")
     public <T> T deserializeToArray(JSONArray jsonArray, Class<T> clazz) {
+        if (jsonArray == null) return null;
         if (!clazz.isArray())
             throw new JSONDeserializerException("wrong type: " + clazz);
         T result = null;
@@ -185,6 +189,7 @@ public class JSONDeserializer {
      */
     @SuppressWarnings("unchecked")
     public <T> List<T> deserializeToList(JSONArray jsonArray, Class<T> clazz) {
+        if (jsonArray == null) return null;
         List<T> list = new ArrayList<>();
         try {
             for (Object jsonValue : jsonArray) {
