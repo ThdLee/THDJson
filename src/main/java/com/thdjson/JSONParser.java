@@ -43,6 +43,7 @@ public class JSONParser {
     /**
      * Covert json string to JSONFormat.
      * @param json string with json format
+     * @return JSONFormat instance from string
      */
     public JSONFormat parseJson(String json) {
         if (json == null) return null;
@@ -61,6 +62,7 @@ public class JSONParser {
     /**
      * Covert json string to JSONArray.
      * @param json string with json format
+     * @return JSONArray instance from string
      */
     public JSONArray parseArray(String json) {
         if (json == null) return null;
@@ -72,6 +74,7 @@ public class JSONParser {
     /**
      * Covert json string to JSONObject.
      * @param json string with json format
+     * @return JSONObject instance from string
      */
     public JSONObject parseObject(String json) {
         if (json == null) return null;

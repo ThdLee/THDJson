@@ -41,6 +41,7 @@ public class JSONSerializer {
 
     /**
      * Initializes an Json Serializer with the specified features.
+     * @param features specified serializer features
      */
     public JSONSerializer(JSONSerializerFeature... features) {
         for (JSONSerializerFeature feature : features) {

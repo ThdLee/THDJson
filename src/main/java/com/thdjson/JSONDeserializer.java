@@ -54,6 +54,7 @@ public class JSONDeserializer {
      * Deserialize string with json format to class instance.
      * @param json string with json format
      * @param clazz class type to return
+     * @param <T> the type of the desired object
      * @return Generic T instance
      * @throws JSONDeserializerException if class wrong
      */
@@ -66,6 +67,7 @@ public class JSONDeserializer {
      * Deserialize json format to class instance.
      * @param jsonObject instance of JSONObject
      * @param clazz class type to return
+     * @param <T> the type of the desired object
      * @return Generic T instance
      * @throws JSONDeserializerException if class wrong
      */
@@ -86,6 +88,7 @@ public class JSONDeserializer {
      * Deserialize string with json format to map.
      * @param json string with json format
      * @param clazz value type in map
+     * @param <T> the type of the map value
      * @return instance of HashMap, String is key type
      * @throws JSONDeserializerException if class wrong
      */
@@ -98,6 +101,7 @@ public class JSONDeserializer {
      * Deserialize json format to map.
      * @param jsonObject instance of JSONObject
      * @param clazz value type in map
+     * @param <T> the type of the map value
      * @return instance of HashMap, String is key type
      * @throws JSONDeserializerException if class wrong
      */
@@ -120,7 +124,7 @@ public class JSONDeserializer {
      * Deserialize string with json format to map.
      * @param json string with json format
      * @param clazz value types in map
-     * @return instance of HashMap<String, Object>
+     * @return instance of HashMap
      * @throws JSONDeserializerException if class wrong
      */
     public Map<String, Object> deserializeToMap(String json, Class<?>[] clazz) {
@@ -132,7 +136,7 @@ public class JSONDeserializer {
      * Deserialize json format to map.
      * @param jsonObject instance of JSONObject
      * @param clazz value types in map
-     * @return instance of HashMap<String, Object>
+     * @return instance of HashMap
      * @throws JSONDeserializerException if class wrong
      */
     @SuppressWarnings("unchecked")
@@ -158,6 +162,7 @@ public class JSONDeserializer {
      * Deserialize string with json format to array.
      * @param json string with json format
      * @param clazz class type to return
+     * @param <T> the type of the array
      * @throws JSONDeserializerException if class wrong
      */ 
     public <T> T deserializeToArray(String json, Class<T> clazz) {
@@ -169,6 +174,7 @@ public class JSONDeserializer {
      * Deserialize json format to array.
      * @param jsonArray instance of JSONArray
      * @param clazz class type to return
+     * @param <T> the type of the array
      * @throws JSONDeserializerException if class wrong
      */
     @SuppressWarnings("unchecked")
@@ -189,6 +195,7 @@ public class JSONDeserializer {
      * Deserialize string with json format to List.
      * @param json instance of JSONArray
      * @param clazz element type in List
+     * @param <T> the type of the element of list
      * @return instance of ArrayList
      * @throws JSONDeserializerException if class wrong
      */
@@ -201,6 +208,7 @@ public class JSONDeserializer {
      * Deserialize json format to List.
      * @param jsonArray instance of JSONArray
      * @param clazz element type in List
+     * @param <T> the type of the element of list
      * @return instance of ArrayList
      * @throws JSONDeserializerException if class wrong
      */

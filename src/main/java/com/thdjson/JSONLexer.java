@@ -69,7 +69,7 @@ public class JSONLexer {
 
     private int cur = -1;   // current position for json string
 
-    private JSONToken JSONToken;
+    private JSONToken token;
 
     private char ch = '\0';
 
@@ -83,7 +83,7 @@ public class JSONLexer {
     /**
      * Get Token from JsonFormat String successively/
      * @return Token or null(no token can be found)
-     * @throws JSONLexerException
+     * @throws JSONLexerException json syntax error
      */
     public JSONToken nextToken() throws JSONLexerException {
         nextChar();
@@ -92,19 +92,19 @@ public class JSONLexer {
             nextChar();
         }
         if (isEOF()) {
-            JSONToken = null;
+            token = null;
         } else if (ch == '{') {
-            JSONToken = JSONToken.LBRACE;
+            token = JSONToken.LBRACE;
         } else if (ch == '}') {
-            JSONToken = JSONToken.RBRACE;
+            token = JSONToken.RBRACE;
         } else if (ch == '[') {
-            JSONToken = JSONToken.LBRACKET;
+            token = JSONToken.LBRACKET;
         } else if (ch == ']') {
-            JSONToken = JSONToken.RBRACKET;
+            token = JSONToken.RBRACKET;
         } else if (ch == ':') {
-            JSONToken = JSONToken.COLON;
+            token = JSONToken.COLON;
         } else if (ch == ',') {
-            JSONToken = JSONToken.COMMA;
+            token = JSONToken.COMMA;
         } else if (ch == 'n') {
             scanNull();
         } else if (ch == 'f') {
@@ -119,7 +119,7 @@ public class JSONLexer {
             throw new JSONLexerException(ch);
         }
 
-        return JSONToken;
+        return token;
     }
 
     private char nextChar() throws JSONLexerException {
@@ -167,7 +167,7 @@ public class JSONLexer {
             }
             nextChar();
         }
-        JSONToken = JSONToken.STRING.addData(readBuffer.toString());
+        token = JSONToken.STRING.addData(readBuffer.toString());
     }
 
     private void scanTrue() throws JSONLexerException {
@@ -185,7 +185,7 @@ public class JSONLexer {
         }
         nextChar();
         if (EndSigns.contains(ch)) {
-            JSONToken = JSONToken.TRUE;
+            token = JSONToken.TRUE;
             cur--;
         } else {
             throw new JSONLexerException(ch);
@@ -211,7 +211,7 @@ public class JSONLexer {
         }
         nextChar();
         if (EndSigns.contains(ch)) {
-            JSONToken = JSONToken.FALSE;
+            token = JSONToken.FALSE;
             cur--;
         } else {
             throw new JSONLexerException(ch);
@@ -233,7 +233,7 @@ public class JSONLexer {
         }
         nextChar();
         if (EndSigns.contains(ch)) {
-            JSONToken = JSONToken.NULL;
+            token = JSONToken.NULL;
             cur--;
         } else {
             throw new JSONLexerException(ch);
@@ -280,9 +280,9 @@ public class JSONLexer {
         }
         cur--;
         if (isDouble) {
-            JSONToken = JSONToken.FLOAT.addData(readBuffer.toString());
+            token = JSONToken.FLOAT.addData(readBuffer.toString());
         } else {
-            JSONToken = JSONToken.INT.addData(readBuffer.toString());
+            token = JSONToken.INT.addData(readBuffer.toString());
         }
     }
 
