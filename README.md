@@ -9,9 +9,9 @@ THDJson can work with many Java objects including some pre-existing objects that
 
 THDJson is released under the [Apache 2.0 license](LISENCE).
 
+```
 Copyright 2017 ThdLee
 
-```
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
